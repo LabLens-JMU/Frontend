@@ -4,12 +4,14 @@ import '../../css/Aside.css'
 const Aside = () => {
     return (
         <>
-            <nav className='aside'>
-                <h2>Labrooms</h2>
-                <ul className='labrooms'>
-                    <li>Placeholder - Lab room 2020</li>
-                </ul>
-            </nav>
+            <main>
+                <nav className='aside'>
+                    <h2>Labrooms</h2>
+                    <ul className='labrooms'>
+                        <li> <a href='./Labroom-layout.jsx'>Placeholder - Lab room 2020</a ></li>
+                    </ul>
+                </nav>
+            </main>
         </>
     )
 }
