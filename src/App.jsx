@@ -4,6 +4,7 @@ import './App.css';
 import '/css/styles.css';
 import Aside from './components/Aside'
 import Header from './components/Header'
+import Card from './components/Card'
 
 // Connect to the Express server
 const socket = io('http://localhost:3001');
@@ -29,8 +30,13 @@ export default function App() {
 
   return (
   <div>
-    <Header />
-    <Aside />
+    <div className='top'>
+      <Header />
+    </div>
+    <div className='center'>
+      <Aside />
+      <Card />
+    </div>
   </div>
   );
 }

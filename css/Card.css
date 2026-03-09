@@ -1,0 +1,61 @@
+/* Card.module.css */
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-content: flex-start;
+    margin: 20px 20px 0px 20px;
+    gap: 10px;
+}
+
+.hero-card {
+    display: flex;
+    background-color: grey;
+    border: 1px solid red;
+    border-radius: 12px;
+    padding: 24px;
+    width: 450px;
+    color: lime;
+    font-family: sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    height: 10vh;
+}
+
+.hero-card:hover {
+    transform: translateY(-5px);
+    border-color: #00ff9d; /* Cyber Green */
+    box-shadow: 0 10px 20px rgba(0, 255, 157, 0.1);
+}
+
+.title {
+    margin: 0 0 12px 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #00ff9d;
+}
+
+.description {
+    color: #999;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.badge {
+    display: inline-block;
+    background: #333;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.button {
+    background: none;
+    border: 1px solid #00ff9d;
+    color: #00ff9d;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
