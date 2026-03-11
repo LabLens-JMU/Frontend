@@ -9,13 +9,10 @@
 }
 
 .hero-card {
-    display: flex;
     background-color: grey;
-    border: 1px solid red;
     border-radius: 12px;
     padding: 24px;
     width: 450px;
-    color: lime;
     font-family: sans-serif;
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -28,15 +25,15 @@
     box-shadow: 0 10px 20px rgba(0, 255, 157, 0.1);
 }
 
-.title {
+.room {
     margin: 0 0 12px 0;
     font-size: 1.25rem;
     font-weight: 600;
-    color: #00ff9d;
+    color: white;
 }
 
 .description {
-    color: #999;
+    color: goldenrod;
     line-height: 1.5;
     margin-bottom: 20px;
 }

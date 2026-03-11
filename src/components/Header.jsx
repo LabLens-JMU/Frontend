@@ -5,10 +5,12 @@ const Header = () => {
     return (
         <>
             <header>
-                <h2>Buildings</h2>
+                <img className='logo' src='src/assets/images/LabLensLogo.png' width='75' alt='Logo'/>
+                <h1 className='title'>LabLens</h1>
                 <nav>
-                    <ul>
-                        <li><img src='src/assets/images/Graph.jpg' width='25'/></li>
+                    <ul className='list-icons'>
+                        <li className='graph'><img src='src/assets/images/Graph.jpg' width='50' alt='graph'/></li>
+                        <li className='settings'><img src='src/assets/images/Settings.png' width='50' alt='settings'/></li>
                     </ul>
                 </nav>
             </header>
