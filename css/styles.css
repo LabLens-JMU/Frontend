@@ -1,21 +1,57 @@
-html {
-    background-color: lightgray;
-}
-body {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    color: white;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    /*overflow-x: hidden;*/
-    /*overflow-y: hidden;*/
+:root {
+    /* JMU colors */
+    --jmuPurple: #450084;
+    --jmuGold: #CBB677;
+    --mediumPurple: #B599CE;
+    --lightPurple: #DACCE6;
+    --darkGold: #AD9C65;
+    --lightGold: #F4EFE1;
+    --slateGray: #333333;
+    --darkGray: #595959;
+    --mediumGray: #B2B2B2;
+    --lightGray: #D6D6D6;
+    --darkGreen: #5F791C;
+    --darkBlue: #3C738B;
+    --mediumGreen: #ADCC23;
+    --mediumBlue: #5498B6;
+    --lightGreen: #DEEBA7;
+    --lightBlue: #D2EBF5;
+    --jmuRed: #A4232B;
+    /* Status colors */
+    --isFull: var(--jmuRed);
+    --isIdle: rgb(255, 240, 27);
+    --isEmpty: var(--mediumGreen);
+
 }
 
-.top{
-    display: flex;
+html {
+  background-color: lightgray;
+}
+
+body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: white;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  /*overflow-x: hidden;*/
+  /*overflow-y: hidden;*/
+}
+
+.top {
+  display: flex;
+}
+
+.left {
+  display: flex;
 }
 
 .center {
-    display: flex;
+  display: flex;
+  width: 100%;
+}
+
+.screen {
+  display: flex;
 }

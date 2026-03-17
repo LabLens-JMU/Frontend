@@ -3,13 +3,17 @@ header {
     width: 100vw;
     height: 17vh;
     justify-content: space-between;
-    background-color: rebeccapurple;
+    background-color: var(--jmuPurple);
     align-items: center;
-
+    position: relative;
 }
 
 .title {
     font-size: 40px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
 }
 
 header ul li{
@@ -24,4 +28,8 @@ header ul li{
 
 .settings {
     padding-right: 15px;
+}
+
+.graph {
+    filter: invert(80%);
 }

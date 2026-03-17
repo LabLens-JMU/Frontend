@@ -3,7 +3,7 @@
     justify-content: left;
     width: 200px;
     height: 85vh;
-    background-color: mediumpurple;
+    background-color: var(--mediumPurple);
     padding: 20px;
 }
 
@@ -39,12 +39,12 @@
 
 .breadcrumb-item {
     cursor: pointer;
-    color: #0056b3;
+    color: var(--darkBlue);
     transition: color 0.2s ease;
 }
 
 .breadcrumb-item:hover {
-    color: #003d82;
+    color: var(--mediumBlue);
     text-decoration: underline;
 }
 
@@ -76,7 +76,7 @@
     align-items: center;
     border-radius: 6px;
     font-size: 15px;
-    color: #222222;
+    color: var(--slateGray);
     transition: background-color 0.15s ease, transform 0.1s ease;
 }
 

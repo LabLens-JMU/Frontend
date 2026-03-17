@@ -1,20 +1,28 @@
 import React from 'react';
 import '../../css/Card.css';
 
-const Card = ({title, description, tag}) => {
+const Card = ({ onSelectRoom }) => {
     return (
         <section className='container'>
             <div className='hero-card'>
-                {/*<span className='badge'>tag</span>*/}
-                <h3 className='room'>Lab Room 2020</h3>
+                <h3
+                    className='room'
+                    role='button'
+                    tabIndex={0}
+                    onClick={() => onSelectRoom?.('2020')}
+                    onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            onSelectRoom?.('2020');
+                        }
+                    }}
+                >
+                    Lab Room 2020
+                </h3>
                 <p className='description'>Occupancy: 0</p>
-                {/*<button className='button'>View Details</button>*/}
             </div>
             <div className='hero-card'>
-                {/*<span className='badge'>tag</span>*/}
                 <h3 className='room'>Lab Room 2039</h3>
                 <p className='description'>Occupancy: 0</p>
-                {/*<button className='button'>View Details</button>*/}
             </div>
         </section>
     );

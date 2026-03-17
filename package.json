@@ -10,17 +10,15 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist -b gh-pages"
   },
   "dependencies": {
+    "_comment": "I removed express ^5.2.1, mongoose ^9.2.1, and socket.io ^4.8.3",
     "@untitledui/icons": "^0.0.21",
     "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "mongoose": "^9.2.1",
     "react": "^19.2.0",
     "react-aria-components": "^1.16.0",
     "react-dom": "^19.2.0",
-    "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3",
     "tailwind-merge": "^3.5.0"
   },
