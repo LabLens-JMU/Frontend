@@ -5,7 +5,8 @@ import "/css/styles.css";
 import Aside from "./components/Aside";
 import Header from "./components/Header";
 import Card from "./components/Card";
-import Layout from "./pages/2020-layout";
+import LayoutTwoZero from "./pages/2020-layout";
+import LayoutThreeNine from './pages/2039-layout.jsx';
 
 // Connect to the Express server
 const socket = io("http://localhost:3001");
@@ -37,11 +38,15 @@ export default function App() {
       </section>
       <div className='center'>
         <section className="left">
-          <Aside />
+          {activeRoom === "2020" ? (
+              <LayoutTwoZero/>
+          ) : (
+              <Aside onSelectRoom={setActiveRoom} />
+          )}
         </section>
         <section className="screen">
-          {activeRoom === "2020" ? (
-            <Layout />
+          {activeRoom === "2039" ? (
+            <LayoutThreeNine />
           ) : (
             <Card onSelectRoom={setActiveRoom} />
           )}

@@ -10,11 +10,6 @@ const Card = ({ onSelectRoom }) => {
                     role='button'
                     tabIndex={0}
                     onClick={() => onSelectRoom?.('2020')}
-                    onKeyDown={(event) => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                            onSelectRoom?.('2020');
-                        }
-                    }}
                 >
                     Lab Room 2020
                 </h3>

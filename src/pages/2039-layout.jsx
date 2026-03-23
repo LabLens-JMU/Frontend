@@ -3,14 +3,14 @@ import Seat from '../components/Seat'
 import '../../css/labRoom.css'
 
 
-const Layout2020 = () => {
+const Layout2039 = () => {
     return (
         <>
             <main>
-                <Seat />
+
             </main>
         </>
     )
 }
 
-export default Layout2020
+export default Layout2039

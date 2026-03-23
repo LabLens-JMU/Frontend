@@ -21,13 +21,14 @@ const campusData = [
     },
 ];
 
-export function Aside() {
+export function Aside({ onSelectRoom }) {
     // If null, we show all buildings. If an object, we show that building's rooms.
     const [selectedBuilding, setSelectedBuilding] = useState(null);
 
-    const handleRoomSelect = (room) => {
+    const handleRoomSelect = (room, { onSelectRoom }) => {
         alert(`You selected ${room.name} in the ${selectedBuilding.name}`);
-    };
+        // onSelectRoom?.('2020')};
+    }
 
     return (
         <div className="aside">
@@ -61,7 +62,7 @@ export function Aside() {
                         selectedBuilding.rooms.map((room) => (
                             <div
                                 key={room.id}
-                                onClick={() => handleRoomSelect(room)}
+                                onClick={() => onSelectRoom?.('2020')}
                                 className="location-item"
                             >
                                 <span>🚪</span>
