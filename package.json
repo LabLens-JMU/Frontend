@@ -10,10 +10,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist -b gh-pages"
+    "deploy": "cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://github.com/LabLens-Frontend/Frontend.git master:gh-pages && cd .."
   },
   "dependencies": {
-    "_comment": "I removed express ^5.2.1, mongoose ^9.2.1, and socket.io ^4.8.3",
     "@untitledui/icons": "^0.0.21",
     "cors": "^2.8.6",
     "react": "^19.2.0",
