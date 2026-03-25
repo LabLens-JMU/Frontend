@@ -38,14 +38,12 @@ export default function App() {
       </section>
       <div className='center'>
         <section className="left">
-          {activeRoom === "2020" ? (
-              <LayoutTwoZero/>
-          ) : (
-              <Aside onSelectRoom={setActiveRoom} />
-          )}
+          <Aside onSelectRoom={setActiveRoom} />
         </section>
         <section className="screen">
-          {activeRoom === "2039" ? (
+          {activeRoom === "r2020" ? (
+            <LayoutTwoZero />
+          ) : activeRoom === "r2039" ? (
             <LayoutThreeNine />
           ) : (
             <Card onSelectRoom={setActiveRoom} />
