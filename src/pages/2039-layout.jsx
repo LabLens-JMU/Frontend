@@ -1,5 +1,5 @@
 import React from 'react'
-import Seat from '../components/Seat'
+import Seat from '../components/2039Seating'
 import '../../css/labRoom.css'
 
 
@@ -7,7 +7,7 @@ const Layout2039 = () => {
     return (
         <>
             <main>
-
+                <Seat />
             </main>
         </>
     )

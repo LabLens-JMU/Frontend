@@ -1,5 +1,5 @@
 import React from 'react'
-import Seat from '../components/Seat'
+import Seat from '../components/2020Seating'
 import '../../css/labRoom.css'
 
 
