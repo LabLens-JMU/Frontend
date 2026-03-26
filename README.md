@@ -8,31 +8,36 @@ This project uses a MERN stack and computer vision to monitor computer lab usage
 
 ## Features
 
-- Real-time lab occupancy display  
-- Historical usage trends (by day and time)  
-- Interactive dashboard UI built with React  
-- Scalable design for multiple lab rooms  
+- Real-time lab occupancy display
+- Historical usage trends (by day and time)
+- Interactive dashboard UI built with React
+- Scalable design for multiple lab rooms
 
 ## Tech Stack
 
 **Frontend**
+
 - React
 - JSX
 - CSS
 
 **Backend**
+
 - Node.js
 - Express
 
 **Database**
+
 - PostgreSQL
 
 **Hardware**
-- Raspberry Pi  
-- YOLOv8  
-- Camera 
+
+- Raspberry Pi
+- YOLOv8
+- Camera
 
 **Deployment**
+
 - Apache (Bluehost)
 
 ## Architecture

@@ -6,7 +6,7 @@ import Aside from "./components/Aside";
 import Header from "./components/Header";
 import Card from "./components/Card";
 import LayoutTwoZero from "./pages/2020-layout";
-import LayoutThreeNine from './pages/2039-layout.jsx';
+import LayoutThreeNine from "./pages/2039-layout.jsx";
 
 // Connect to the Express server
 const socket = io("http://localhost:3001");
@@ -36,7 +36,7 @@ export default function App() {
       <section className="top">
         <Header />
       </section>
-      <div className='center'>
+      <div className="center">
         <section className="left">
           <Aside onSelectRoom={setActiveRoom} />
         </section>
