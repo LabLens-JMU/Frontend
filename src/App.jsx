@@ -7,49 +7,56 @@ import Header from "./components/Header";
 import Card from "./components/Card";
 import LayoutTwoZero from "./pages/2020-layout";
 import LayoutThreeNine from "./pages/2039-layout.jsx";
+import Graph from "./pages/Graph";
 
 // Connect to the Express server
 const socket = io("http://localhost:3001");
 
 export default function App() {
-  const [message, setMessage] = useState("");
-  const [chatLog, setChatLog] = useState([]);
-  const [activeRoom, setActiveRoom] = useState(null);
+	const [message, setMessage] = useState("");
+	const [chatLog, setChatLog] = useState([]);
+	const [activeRoom, setActiveRoom] = useState(null);
+	const [showGraph, setShowGraph] = useState(false);
 
-  useEffect(() => {
-    // Listen for the server's "receive_message" push
-    socket.on("receive_message", (data) => {
-      setChatLog((prev) => [...prev, data]);
-    });
+	useEffect(() => {
+		// Listen for the server's "receive_message" push
+		socket.on("receive_message", (data) => {
+			setChatLog((prev) => [...prev, data]);
+		});
 
-    return () => socket.off("receive_message");
-  }, []);
+		return () => socket.off("receive_message");
+	}, []);
 
-  const sendMessage = () => {
-    // Push data to the server (and eventually to Mongo)
-    socket.emit("send_message", message);
-    setMessage("");
-  };
+	const sendMessage = () => {
+		// Push data to the server (and eventually to Mongo)
+		socket.emit("send_message", message);
+		setMessage("");
+	};
 
-  return (
-    <div className="main">
-      <section className="top">
-        <Header />
-      </section>
-      <div className="center">
-        <section className="left">
-          <Aside onSelectRoom={setActiveRoom} />
-        </section>
-        <section className="screen">
-          {activeRoom === "r2020" ? (
-            <LayoutTwoZero />
-          ) : activeRoom === "r2039" ? (
-            <LayoutThreeNine />
-          ) : (
-            <Card onSelectRoom={setActiveRoom} />
-          )}
-        </section>
-      </div>
-    </div>
-  );
+	return (
+		<div className="main">
+			<section className="top">
+				<Header onShowGraph={() => setShowGraph(true)} />
+			</section>
+
+			{showGraph ? (
+				<Graph />
+			) : (
+				<div className="center">
+					<section className="left">
+						<Aside onSelectRoom={setActiveRoom} />
+					</section>
+					<section className="screen">
+						{activeRoom === "r2020" ? (
+							<LayoutTwoZero />
+						) : activeRoom === "r2039" ? (
+							<LayoutThreeNine />
+						) : (
+							<Card onSelectRoom={setActiveRoom} />
+						)}
+					</section>
+				</div>
+			)}
+		</div>
+	);
 }

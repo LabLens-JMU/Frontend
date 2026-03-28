@@ -26,10 +26,20 @@ header ul li {
   gap: 25px;
 }
 
+.logo:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
 .settings {
   padding-right: 15px;
 }
 
 .graph {
-  filter: invert(80%);
+  filter: brightness(0) invert(1);
+}
+
+.graph:hover {
+  cursor: pointer;
+  transform: scale(1.1);
 }

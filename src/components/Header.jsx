@@ -4,19 +4,19 @@ import logo from "../assets/images/LabLensLogo.png";
 import graph from "../assets/images/Graph.png";
 import settings from "../assets/images/Settings.png";
 
-const Header = () => {
+const Header = ({ onShowGraph }) => {
   return (
     <>
       <header>
-        <img className="logo" src={logo} width="75" alt="Logo" />
-        <h1 className="title">LabLens</h1>
+        <img className="logo" onClick={() => { window.location.reload(); }} src={logo} width="75" alt="Logo" />
+        <h1 className="title" >LabLens</h1>
         <nav>
           <ul className="list-icons">
             <li className="graph">
-              <img src={graph} width="50" alt="graph" />
+              <img className="graph" onClick={onShowGraph} src={graph} width="50" alt="graph" />
             </li>
             <li className="settings">
-              <img src={settings} width="50" alt="settings" />
+              <img className="settings" src={settings} width="50" alt="settings" />
             </li>
           </ul>
         </nav>
