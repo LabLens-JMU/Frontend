@@ -36,15 +36,20 @@ export default function App() {
 	return (
 		<div className="main">
 			<section className="top">
-				<Header onShowGraph={() => setShowGraph(true)} />
+				<Header
+					onShowGraph={() => setShowGraph(true)}
+				/>
 			</section>
-
 			{showGraph ? (
 				<Graph />
 			) : (
 				<div className="center">
 					<section className="left">
-						<Aside onSelectRoom={setActiveRoom} />
+						<Aside
+							onSelectRoom={
+								setActiveRoom
+							}
+						/>
 					</section>
 					<section className="screen">
 						{activeRoom === "r2020" ? (
@@ -52,7 +57,11 @@ export default function App() {
 						) : activeRoom === "r2039" ? (
 							<LayoutThreeNine />
 						) : (
-							<Card onSelectRoom={setActiveRoom} />
+							<Card
+								onSelectRoom={
+									setActiveRoom
+								}
+							/>
 						)}
 					</section>
 				</div>

@@ -8,6 +8,15 @@
   padding: 5px;
 }
 
+.roomContainer {
+  border: 2px dashed red;
+  justify-content: center;
+  align-items: center;
+  min-width: 1083px;
+  gap: 10px;
+
+}
+
 .room-seats {
   display: flex;
   justify-content: space-evenly;
@@ -27,6 +36,7 @@
 .col {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-evenly;
 }
 
 .seat-1 {

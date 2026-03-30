@@ -92,6 +92,12 @@
   transform: scale(0.99); /* Tiny click-down effect */
 }
 
+.location-item.active {
+  background-color: #e6ecff;
+  color: var(--darkBlue);
+  font-weight: 600;
+}
+
 /* Pushes the arrow to the far right of the row */
 .chevron-right {
   margin-left: auto;

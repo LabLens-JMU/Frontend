@@ -9,14 +9,14 @@ const Header = ({ onShowGraph }) => {
     <>
       <header>
         <img className="logo" onClick={() => { window.location.reload(); }} src={logo} width="75" alt="Logo" />
-        <h1 className="title" >LabLens</h1>
+        <h1 className="title">LabLens</h1>
         <nav>
           <ul className="list-icons">
             <li className="graph">
               <img className="graph" onClick={onShowGraph} src={graph} width="50" alt="graph" />
             </li>
             <li className="settings">
-              <img className="settings" src={settings} width="50" alt="settings" />
+              <img src={settings} width="50" alt="settings" />
             </li>
           </ul>
         </nav>

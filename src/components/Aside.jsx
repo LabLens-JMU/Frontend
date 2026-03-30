@@ -21,7 +21,7 @@ const campusData = [
   },
 ];
 
-export function Aside({ onSelectRoom }) {
+export function Aside({ onSelectRoom, activeRoomId }) {
   // If null, we show all buildings. If an object, we show that building's rooms.
   const [selectedBuilding, setSelectedBuilding] = useState(null);
 
@@ -56,7 +56,9 @@ export function Aside({ onSelectRoom }) {
               <div
                 key={room.id}
                 onClick={() => onSelectRoom?.(room.id)}
-                className="location-item"
+                className={`location-item ${
+                  activeRoomId === room.id ? "active" : ""
+                }`}
               >
                 <span>🚪</span>
                 <span>{room.name}</span>
