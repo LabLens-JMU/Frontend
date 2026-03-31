@@ -25,6 +25,7 @@
 
 html {
   background-color: lightgray;
+  height: 100%;
 }
 
 body {
@@ -38,19 +39,47 @@ body {
   /*overflow-y: hidden;*/
 }
 
+#root {
+  min-height: 100vh;
+}
+
+.main {
+  min-height: 100vh;
+}
+
 .top {
   display: flex;
 }
 
 .left {
   display: flex;
+  flex: 0 0 auto;
 }
 
 .center {
   display: flex;
   width: 100%;
+  min-height: calc(100vh - 17vh);
+}
+
+.aside-center {
+  align-items: center;
+  justify-content: center;
+  background-image:
+    linear-gradient(rgba(69, 0, 132, 0), rgba(69, 0, 132, 0.35)),
+    url("../src/assets/images/EastCampus.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Wider left section used only on the landing page. */
+.aside-left {
+  width: min(100%, 1100px);
+  justify-content: center;
 }
 
 .screen {
   display: flex;
+  flex: 1;
 }

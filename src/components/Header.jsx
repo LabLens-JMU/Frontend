@@ -8,12 +8,26 @@ const Header = ({ onShowGraph }) => {
   return (
     <>
       <header>
-        <img className="logo" onClick={() => { window.location.reload(); }} src={logo} width="75" alt="Logo" />
+        <img
+          className="logo"
+          onClick={() => {
+            window.location.reload();
+          }}
+          src={logo}
+          width="75"
+          alt="Logo"
+        />
         <h1 className="title">LabLens</h1>
         <nav>
           <ul className="list-icons">
             <li className="graph">
-              <img className="graph" onClick={onShowGraph} src={graph} width="50" alt="graph" />
+              <img
+                className="graph"
+                onClick={onShowGraph}
+                src={graph}
+                width="50"
+                alt="graph"
+              />
             </li>
             <li className="settings">
               <img src={settings} width="50" alt="settings" />

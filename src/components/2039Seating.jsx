@@ -6,7 +6,7 @@ const Seating2039 = () => {
 
   return (
     <>
-      <div className='roomContainer'>
+      <div className="roomContainer">
         <section className="room-seats row">
           <div className="seat-1 block">
             <p>Seat #1</p>
