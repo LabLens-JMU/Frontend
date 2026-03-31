@@ -1,28 +1,296 @@
 import React from "react";
-import RoomLayout from "./RoomLayout";
-
-const seatStatus = "Not finished";
-
-const room2020Map = [
-  ["display", "display", "display", "display", "display", "display", "display"],
-  ["seat-1", "seat-2", "seat-3", "aisle", "seat-1", "seat-2", "seat-3"],
-  ["seat-1", "seat-2", "seat-3", "aisle", "seat-1", "seat-2", "seat-3"],
-  ["seat-1", "seat-2", "seat-3", "aisle", "seat-1", "seat-2", "seat-3"],
-  ["walkway", "walkway", "walkway", "walkway", "walkway", "walkway", "walkway"],
-  ["seat-1", "seat-2", "seat-3", "aisle", "seat-1", "seat-2", "seat-3"],
-  ["seat-1", "seat-2", "seat-3", "aisle", "seat-1", "seat-2", "seat-3"],
-  ["seat-1", "seat-2", "seat-3", "aisle", "seat-1", "seat-2", "seat-3"],
-  ["instructor", "instructor", "instructor", "open", "door", "door", "open"],
-];
+import "../../css/Seat.css";
 
 const Seating2020 = () => {
-  return (
-    <RoomLayout
-      roomName="Room 2020"
-      roomMap={room2020Map}
-      seatStatus={seatStatus}
-    />
-  );
+	const seatStatus = "Not finished";
+
+	return (
+		<>
+			<div className="roomContainer">
+				<section className="col">
+					<section className="room-seats row">
+						<div className="seat-1 block">
+							<p>Seat #1</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-2 block">
+							<p>Seat #2</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-3 block">
+							<p>Seat #3</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-1 block">
+							<p>Seat #4</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-2 block">
+							<p>Seat #5</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-3 block">
+							<p>Seat #6</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+					</section>
+					<section className="room-seats row">
+						<div className="seat-1 block">
+							<p>Seat #7</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-2 block">
+							<p>Seat #8</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-3 block">
+							<p>Seat #9</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-1 block">
+							<p>Seat #10</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-2 block">
+							<p>Seat #11</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-3 block">
+							<p>Seat #12</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+					</section>
+					<div className="block">
+						<p>Board</p>
+					</div>
+				</section>
+
+				<section className="col">
+					<section className="room-seats row">
+						<div className="seat-1 block">
+							<p>Seat #13</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-2 block">
+							<p>Seat #14</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-3 block">
+							<p>Seat #15</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-1 block">
+							<p>Seat #16</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-2 block">
+							<p>Seat #17</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-3 block">
+							<p>Seat #18</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+					</section>
+					<section className="room-seats row">
+						<div className="seat-1 block">
+							<p>Seat #19</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-2 block">
+							<p>Seat #20</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-3 block">
+							<p>Seat #21</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-1 block">
+							<p>Seat #22</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-2 block">
+							<p>Seat #23</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-3 block">
+							<p>Seat #24</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+					</section>
+					<div className="block">
+						<p>Board</p>
+					</div>
+				</section>
+
+				<section className="col">
+					<section className="room-seats row">
+						<div className="seat-1 block">
+							<p>Seat #25</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-2 block">
+							<p>Seat #26</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-3 block">
+							<p>Seat #27</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-1 block">
+							<p>Seat #28</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-2 block">
+							<p>Seat #29</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-3 block">
+							<p>Seat #30</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+					</section>
+					<section className="room-seats row">
+						<div className="seat-1 block">
+							<p>Seat #31</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-2 block">
+							<p>Seat #32</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-3 block">
+							<p>Seat #33</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-1 block">
+							<p>Seat #34</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-2 block">
+							<p>Seat #35</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+						<div className="seat-3 block">
+							<p>Seat #36</p>
+							<p>
+								Status:{" "}
+								{seatStatus}
+							</p>
+						</div>
+					</section>
+					<div className="block">
+						<p>Board</p>
+					</div>
+				</section>
+			</div>
+		</>
+	);
 };
 
 export default Seating2020;
