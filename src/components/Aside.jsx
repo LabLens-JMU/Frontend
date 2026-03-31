@@ -1,6 +1,4 @@
-// import React from 'react'
 import "../../css/Aside.css";
-import React, { useState } from "react";
 
 const campusData = [
   {
@@ -21,69 +19,79 @@ const campusData = [
   },
 ];
 
-export function Aside({ onSelectRoom, activeRoomId }) {
-  // If null, we show all buildings. If an object, we show that building's rooms.
-  const [selectedBuilding, setSelectedBuilding] = useState(null);
+export function Aside({
+  onSelectRoom,
+  onSelectBuilding,
+  selectedBuilding,
+  activeRoomId,
+}) {
+  let breadcrumb = null;
+  let content = null;
+  let breadcrumbClassName = "breadcrumb-item active";
+
+  // After choosing a building, show that building name and its rooms.
+  if (selectedBuilding) {
+    breadcrumbClassName = "breadcrumb-item";
+    breadcrumb = (
+      <>
+        <span className="breadcrumb-separator">/</span>
+        <span className="breadcrumb-item active">{selectedBuilding.name}</span>
+      </>
+    );
+
+    if (selectedBuilding.rooms.length > 0) {
+      content = selectedBuilding.rooms.map((room) => {
+        let itemClassName = "location-item";
+
+        if (activeRoomId === room.id) {
+          itemClassName += " active";
+        }
+
+        return (
+          <div
+            key={room.id}
+            onClick={() => onSelectRoom?.(room.id)}
+            className={itemClassName}
+          >
+            <span>Room</span>
+            <span>{room.name}</span>
+          </div>
+        );
+      });
+    } else {
+      content = (
+        <div className="empty-location">
+          No rooms available in this building.
+        </div>
+      );
+    }
+  } else {
+    // Default landing page: list the available buildings.
+    content = campusData.map((building) => (
+      <div
+        key={building.id}
+        onClick={() => onSelectBuilding?.(building)}
+        className="location-item"
+      >
+        <span>Building</span>
+        <span>{building.name}</span>
+        <span className="chevron-right">{">"}</span>
+      </div>
+    ));
+  }
 
   return (
     <div className="aside">
-      {/* --- Header / Back Button --- */}
       <div className="breadcrumb-header">
         <span
-          onClick={() => setSelectedBuilding(null)}
-          className={`breadcrumb-item ${!selectedBuilding ? "active" : ""}`}
+          onClick={() => onSelectBuilding?.(null)}
+          className={breadcrumbClassName}
         >
           Buildings
         </span>
-
-        {/* If a building is selected, show its name in the header */}
-        {selectedBuilding && (
-          <>
-            <span className="breadcrumb-separator">/</span>
-            <span className="breadcrumb-item active">
-              {selectedBuilding.name}
-            </span>
-          </>
-        )}
+        {breadcrumb}
       </div>
-
-      {/* --- List View --- */}
-      <div className="contents-view">
-        {/* VIEW 1: Showing Rooms (because a building is selected) */}
-        {selectedBuilding ? (
-          selectedBuilding.rooms.length > 0 ? (
-            selectedBuilding.rooms.map((room) => (
-              <div
-                key={room.id}
-                onClick={() => onSelectRoom?.(room.id)}
-                className={`location-item ${
-                  activeRoomId === room.id ? "active" : ""
-                }`}
-              >
-                <span>🚪</span>
-                <span>{room.name}</span>
-              </div>
-            ))
-          ) : (
-            <div className="empty-location">
-              No rooms available in this building.
-            </div>
-          )
-        ) : (
-          /* VIEW 2: Showing Buildings (because nothing is selected yet) */
-          campusData.map((building) => (
-            <div
-              key={building.id}
-              onClick={() => setSelectedBuilding(building)}
-              className="location-item"
-            >
-              <span>🏢</span>
-              <span>{building.name}</span>
-              <span className="chevron-right">❯</span>
-            </div>
-          ))
-        )}
-      </div>
+      <div className="contents-view">{content}</div>
     </div>
   );
 }

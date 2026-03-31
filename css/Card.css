@@ -2,14 +2,16 @@
 .container {
   display: flex;
   flex-direction: row;
-  justify-content: right;
+  justify-content: flex-end;
   align-content: flex-start;
   margin: 20px 20px 0px 20px;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .hero-card {
   background-color: grey;
+  border: none;
   border-radius: 12px;
   padding: 24px;
   width: 450px;
@@ -17,12 +19,14 @@
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   height: 10vh;
+  text-align: left;
 }
 
 .hero-card:hover {
   transform: translateY(-5px);
   border-color: #00ff9d; /* Cyber Green */
   box-shadow: 0 10px 20px rgba(0, 255, 157, 0.1);
+  cursor: pointer;
 }
 
 .room {

@@ -1,17 +1,19 @@
-import React from "react";
 import "../../css/Card.css";
 
-const Card = ({ onSelectRoom }) => {
+const Card = ({ rooms = [], onSelectRoom }) => {
   return (
     <section className="container">
-      <div className="hero-card">
-        <h3 className="room">Lab Room 2020</h3>
-        <p className="description">Occupancy: 0</p>
-      </div>
-      <div className="hero-card">
-        <h3 className="room">Lab Room 2039</h3>
-        <p className="description">Occupancy: 0</p>
-      </div>
+      {rooms.map((room) => (
+        <button
+          key={room.id}
+          type="button"
+          className="hero-card"
+          onClick={() => onSelectRoom?.(room.id)}
+        >
+          <h3 className="room">{room.name}</h3>
+          <p className="description">Occupancy: 0</p>
+        </button>
+      ))}
     </section>
   );
 };
