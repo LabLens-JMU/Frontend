@@ -5,7 +5,7 @@ import "../../css/labRoom.css";
 const Layout2020 = () => {
   return (
     <>
-      <main>
+      <main className="lab-room-layout">
         <Seat />
       </main>
     </>

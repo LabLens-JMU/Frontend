@@ -7,6 +7,42 @@ const Seating2020 = () => {
   return (
     <>
       <div className="roomContainer">
+        <section className="col front">
+            <div className="block board">
+              <p>Board</p>
+            </div>
+            <div className="block board">
+              <p>Board</p>
+            </div>
+            <div className="block board">
+              <p>Board</p>
+            </div>
+            <div className="block board">
+              <p>Board</p>
+            </div>
+            <div className="block board">
+              <p>Board</p>
+            </div>
+            <div className="block board">
+              <p>Board</p>
+            </div>
+            <div className="block board">
+              <p>Board</p>
+            </div>
+            <div className="block board">
+              <p>Board</p>
+            </div>
+            <div className="block board">
+              <p>Board</p>
+            </div>
+            <div className="block board">
+              <p>Board</p>
+            </div>
+            <div className="block board">
+              <p>Board</p>
+            </div>
+        </section>
+
         <section className="col">
           <section className="room-seats row">
             <div className="seat-1 block">
@@ -60,7 +96,7 @@ const Seating2020 = () => {
               <p>Status: {seatStatus}</p>
             </div>
           </section>
-          <div className="block">
+          <div className="block board">
             <p>Board</p>
           </div>
         </section>
@@ -118,7 +154,7 @@ const Seating2020 = () => {
               <p>Status: {seatStatus}</p>
             </div>
           </section>
-          <div className="block">
+          <div className="block board">
             <p>Board</p>
           </div>
         </section>
@@ -176,10 +212,13 @@ const Seating2020 = () => {
               <p>Status: {seatStatus}</p>
             </div>
           </section>
-          <div className="block">
+          <div className="block board">
             <p>Board</p>
           </div>
         </section>
+        <div className="doorway">
+          <p>Door</p>
+        </div>
       </div>
     </>
   );
