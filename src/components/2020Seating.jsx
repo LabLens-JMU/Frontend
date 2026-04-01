@@ -8,39 +8,48 @@ const Seating2020 = () => {
     <>
       <div className="roomContainer">
         <section className="col front">
-            <div className="block board">
-              <p>Board</p>
-            </div>
-            <div className="block board">
-              <p>Board</p>
-            </div>
-            <div className="block board">
-              <p>Board</p>
-            </div>
-            <div className="block board">
-              <p>Board</p>
-            </div>
-            <div className="block board">
-              <p>Board</p>
-            </div>
-            <div className="block board">
-              <p>Board</p>
-            </div>
-            <div className="block board">
-              <p>Board</p>
-            </div>
-            <div className="block board">
-              <p>Board</p>
-            </div>
-            <div className="block board">
-              <p>Board</p>
-            </div>
-            <div className="block board">
-              <p>Board</p>
-            </div>
-            <div className="block board">
-              <p>Board</p>
-            </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
         </section>
 
         <section className="col">
@@ -216,9 +225,50 @@ const Seating2020 = () => {
             <p>Board</p>
           </div>
         </section>
-        <div className="doorway">
-          <p>Door</p>
-        </div>
+        <section className="col">
+          <div className="block board doorway">
+            <p>Door</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+          <div className="block board">
+            <p>Board</p>
+          </div>
+        </section>
       </div>
     </>
   );
