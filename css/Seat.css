@@ -42,10 +42,10 @@
 }
 
 .board {
+  width: 6em;
   color: gray;
   background-color: white;
   align-self: center;
-  justify-content: center;
 }
 
 .doorway {

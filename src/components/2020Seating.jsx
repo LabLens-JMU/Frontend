@@ -7,7 +7,7 @@ const Seating2020 = () => {
   return (
     <>
       <div className="roomContainer">
-        <section className="col front">
+        <section className="col top-bottom">
           <div className="block board">
             <p>Board</p>
           </div>
@@ -35,21 +35,7 @@ const Seating2020 = () => {
           <div className="block board">
             <p>Board</p>
           </div>
-          <div className="block board">
-            <p>Board</p>
-          </div>
-          <div className="block board">
-            <p>Board</p>
-          </div>
-          <div className="block board">
-            <p>Board</p>
-          </div>
-          <div className="block board">
-            <p>Board</p>
-          </div>
-          <div className="block board">
-            <p>Board</p>
-          </div>
+
         </section>
 
         <section className="col">
@@ -225,7 +211,7 @@ const Seating2020 = () => {
             <p>Board</p>
           </div>
         </section>
-        <section className="col">
+        <section className="col top-bottom">
           <div className="block board doorway">
             <p>Door</p>
           </div>
@@ -253,21 +239,7 @@ const Seating2020 = () => {
           <div className="block board">
             <p>Board</p>
           </div>
-          <div className="block board">
-            <p>Board</p>
-          </div>
-          <div className="block board">
-            <p>Board</p>
-          </div>
-          <div className="block board">
-            <p>Board</p>
-          </div>
-          <div className="block board">
-            <p>Board</p>
-          </div>
-          <div className="block board">
-            <p>Board</p>
-          </div>
+
         </section>
       </div>
     </>
