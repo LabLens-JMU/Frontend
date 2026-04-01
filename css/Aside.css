@@ -18,7 +18,6 @@
 /* Larger full-width aside styles for the landing page. */
 .aside-left .aside {
   width: 100%;
-  min-height: 55vh;
   height: auto;
   padding: 32px;
   border-radius: 15px;
