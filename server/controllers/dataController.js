@@ -1,9 +1,23 @@
 const pool = require("../db");
 
+const normalizePayload = (body = {}) => {
+  const stationId = body.station_id ?? body.computer_id;
+  const timestamp = body.ts_ms ?? Date.now();
+
+  return {
+    camera_id: body.camera_id ?? "cam-1",
+    station_id: stationId,
+    ts_ms: timestamp,
+    occupied: body.occupied,
+    confidence: body.confidence ?? null,
+  };
+};
+
 // POST data from camera system
 exports.receiveData = async (req, res) => {
   try {
-    const { camera_id, station_id, ts_ms, occupied, confidence } = req.body;
+    const { camera_id, station_id, ts_ms, occupied, confidence } =
+      normalizePayload(req.body);
 
     const result = await pool.query(
       `INSERT INTO occupancy 
@@ -19,6 +33,21 @@ exports.receiveData = async (req, res) => {
     io.emit("new_data", newData);
 
     res.json(newData);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// POST mock data without touching the DB; useful for real-time UI smoke tests.
+exports.receiveMockData = async (req, res) => {
+  try {
+    const payload = normalizePayload(req.body);
+
+    const io = req.app.get("io");
+    io.emit("new_data", payload);
+
+    res.json({ source: "mock", ...payload });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });

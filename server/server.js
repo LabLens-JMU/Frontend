@@ -20,6 +20,7 @@ app.use(express.json());
 app.set("io", io);
 
 app.use("/api/data", require("./routes/dataRoutes"));
+app.use("/api/occupancy", require("./routes/dataRoutes"));
 
 // WebSocket connection
 io.on("connection", (socket) => {

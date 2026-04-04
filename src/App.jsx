@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import "/css/styles.css";
 import Aside from "./components/Aside";
@@ -42,31 +42,108 @@ const toSeatState = (occupied) => {
   return "idle";
 };
 
+const IDLE_TIMEOUT_MS = Number(import.meta.env.VITE_IDLE_TIMEOUT_MS ?? 15 * 60 * 1000);
+
 export default function App() {
   // Shape: { [roomKey]: { [stationId]: "empty" | "idle" | "full" } }
   const [occupancyByRoom, setOccupancyByRoom] = useState({});
+  const occupancyRef = useRef({});
+  const lastOccupiedRef = useRef({});
+  const idleTimersRef = useRef({});
   const [activeRoom, setActiveRoom] = useState(null);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
   const [showGraph, setShowGraph] = useState(false);
 
   useEffect(() => {
+    const clearIdleTimer = (roomKey, stationId) => {
+      const timerKey = `${roomKey}:${stationId}`;
+      const existingTimer = idleTimersRef.current[timerKey];
+      if (existingTimer) {
+        clearTimeout(existingTimer);
+        delete idleTimersRef.current[timerKey];
+      }
+    };
+
+    const setSeatStatus = (roomKey, stationId, status) => {
+      setOccupancyByRoom((prev) => {
+        const next = {
+          ...prev,
+          [roomKey]: {
+            ...(prev[roomKey] || {}),
+            [stationId]: status,
+          },
+        };
+
+        occupancyRef.current = next;
+        return next;
+      });
+    };
+
+    const scheduleIdleToEmpty = (roomKey, stationId, tsMs) => {
+      clearIdleTimer(roomKey, stationId);
+
+      const timestamp = Number(tsMs);
+      const idleUntil = Number.isFinite(timestamp)
+        ? timestamp + IDLE_TIMEOUT_MS
+        : Date.now() + IDLE_TIMEOUT_MS;
+      const remainingMs = Math.max(0, idleUntil - Date.now());
+      const timerKey = `${roomKey}:${stationId}`;
+
+      idleTimersRef.current[timerKey] = setTimeout(() => {
+        delete idleTimersRef.current[timerKey];
+
+        const currentStatus = occupancyRef.current?.[roomKey]?.[stationId];
+        const lastOccupied = lastOccupiedRef.current[timerKey];
+
+        // Only move to empty if the seat is still idle and no newer occupied event arrived.
+        if (currentStatus === "idle" && lastOccupied === false) {
+          setSeatStatus(roomKey, stationId, "empty");
+        }
+      }, remainingMs);
+    };
+
     // Apply one reading (initial fetch or live socket push) into local seat state.
     const applyReading = (reading) => {
-      const stationId = Number(reading?.station_id);
+      const stationId = Number(reading?.station_id ?? reading?.computer_id);
       if (!Number.isFinite(stationId)) {
         return;
       }
 
       const roomKey = normalizeRoomKey(reading?.camera_id);
       const nextSeatState = toSeatState(reading?.occupied);
+      const timerKey = `${roomKey}:${stationId}`;
+      const previousOccupied = lastOccupiedRef.current[timerKey];
 
-      setOccupancyByRoom((prev) => ({
-        ...prev,
-        [roomKey]: {
-          ...(prev[roomKey] || {}),
-          [stationId]: nextSeatState,
-        },
-      }));
+      if (nextSeatState === "full") {
+        lastOccupiedRef.current[timerKey] = true;
+        clearIdleTimer(roomKey, stationId);
+        setSeatStatus(roomKey, stationId, "full");
+        return;
+      }
+
+      if (nextSeatState === "empty") {
+        lastOccupiedRef.current[timerKey] = false;
+        const currentStatus = occupancyRef.current?.[roomKey]?.[stationId];
+        const idleTimerExists = Boolean(idleTimersRef.current[timerKey]);
+
+        // Transition rule from frontend: a 1 -> 0 first becomes idle, then empty after 15 minutes.
+        if (previousOccupied === true) {
+          setSeatStatus(roomKey, stationId, "idle");
+          scheduleIdleToEmpty(roomKey, stationId, reading?.ts_ms);
+          return;
+        }
+
+        // Keep seat idle while its cooldown timer is still active.
+        if (currentStatus === "idle" && idleTimerExists) {
+          return;
+        }
+
+        // 0 without a preceding 1 should remain empty.
+        setSeatStatus(roomKey, stationId, "empty");
+        return;
+      }
+
+      setSeatStatus(roomKey, stationId, "idle");
     };
 
     // Seed the page with the latest known occupancy before live events arrive.
@@ -85,7 +162,11 @@ export default function App() {
     // Listen for new inserts broadcast by the backend controller.
     socket.on("new_data", applyReading);
 
-    return () => socket.off("new_data", applyReading);
+    return () => {
+      socket.off("new_data", applyReading);
+      Object.values(idleTimersRef.current).forEach(clearTimeout);
+      idleTimersRef.current = {};
+    };
   }, []);
 
   // Resolve which room payload should be displayed for the currently selected room.

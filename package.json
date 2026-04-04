@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "check:realtime": "node scripts/realtime-system-check.cjs",
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "cd dist && git init && git add -A && git commit -m 'deploy' && git push -f https://github.com/LabLens-Frontend/Frontend.git master:gh-pages && cd .."
