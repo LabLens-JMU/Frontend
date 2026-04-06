@@ -13,6 +13,9 @@ const normalizePayload = (body = {}) => {
   };
 };
 
+const normalizeCameraId = (cameraId) =>
+  String(cameraId ?? "cam-1").trim().toLowerCase();
+
 // POST data from camera system
 exports.receiveData = async (req, res) => {
   try {
@@ -23,14 +26,10 @@ exports.receiveData = async (req, res) => {
       `INSERT INTO occupancy 
             (camera_id, station_id, ts_ms, occupied, confidence)
             VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [camera_id, station_id, ts_ms, occupied, confidence],
+      [normalizeCameraId(camera_id), station_id, ts_ms, occupied, confidence],
     );
 
     const newData = result.rows[0];
-
-    // Broadcast the new reading immediately so connected dashboards update in real time.
-    const io = req.app.get("io");
-    io.emit("new_data", newData);
 
     res.json(newData);
   } catch (err) {
@@ -43,11 +42,11 @@ exports.receiveData = async (req, res) => {
 exports.receiveMockData = async (req, res) => {
   try {
     const payload = normalizePayload(req.body);
-
-    const io = req.app.get("io");
-    io.emit("new_data", payload);
-
-    res.json({ source: "mock", ...payload });
+    res.json({
+      source: "mock",
+      ...payload,
+      camera_id: normalizeCameraId(payload.camera_id),
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
@@ -65,5 +64,29 @@ exports.getData = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+exports.getCurrentData = async (req, res) => {
+  try {
+    const cameraId = normalizeCameraId(req.query.camera_id);
+
+    const result = await pool.query(
+      `SELECT *
+         FROM occupancy
+        WHERE lower(camera_id) = $1
+        ORDER BY ts_ms DESC
+        LIMIT 1`,
+      [cameraId],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "No occupancy data found for camera" });
+    }
+
+    return res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Server error" });
   }
 };

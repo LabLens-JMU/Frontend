@@ -5,19 +5,10 @@ import Aside from "./components/Aside";
 import Header from "./components/Header";
 import Card from "./components/Card";
 import LayoutTwoZero from "./pages/2020-layout";
+import LayoutThreeSeven from "./pages/2037-layout";
 import LayoutThreeNine from "./pages/2039-layout.jsx";
 import Graph from "./pages/Graph";
-import socket from "../api/socket";
-import { fetchData } from "../api/dataApi";
-
-// Normalize camera/room IDs so both API payloads and UI room keys match reliably.
-const normalizeRoomKey = (cameraId) => {
-  if (cameraId === null || cameraId === undefined) {
-    return "default";
-  }
-
-  return String(cameraId).trim().toLowerCase();
-};
+import { fetchCurrentOccupancy } from "../api/dataApi";
 
 // Convert backend occupied values into the three UI seat states.
 const toSeatState = (occupied) => {
@@ -42,7 +33,14 @@ const toSeatState = (occupied) => {
   return "idle";
 };
 
-const IDLE_TIMEOUT_MS = Number(import.meta.env.VITE_IDLE_TIMEOUT_MS ?? 15 * 60 * 1000);
+const IDLE_TIMEOUT_MS = Number(
+  import.meta.env.VITE_IDLE_TIMEOUT_MS ?? 15 * 60 * 1000,
+);
+const POLL_INTERVAL_MS = Number(import.meta.env.VITE_OCCUPANCY_POLL_MS ?? 3000);
+const CAMERA_ROOM_MAP = {
+  "cam-1": "r2020",
+  "cam-2": "r2037",
+};
 
 export default function App() {
   // Shape: { [roomKey]: { [stationId]: "empty" | "idle" | "full" } }
@@ -102,14 +100,22 @@ export default function App() {
       }, remainingMs);
     };
 
-    // Apply one reading (initial fetch or live socket push) into local seat state.
     const applyReading = (reading) => {
       const stationId = Number(reading?.station_id ?? reading?.computer_id);
       if (!Number.isFinite(stationId)) {
         return;
       }
 
-      const roomKey = normalizeRoomKey(reading?.camera_id);
+      const cameraId = String(reading?.camera_id ?? "")
+        .trim()
+        .toLowerCase();
+      const roomKey = CAMERA_ROOM_MAP[cameraId];
+
+      // Ignore unsupported rooms so 2039 stays a static filler room.
+      if (!roomKey) {
+        return;
+      }
+
       const nextSeatState = toSeatState(reading?.occupied);
       const timerKey = `${roomKey}:${stationId}`;
       const previousOccupied = lastOccupiedRef.current[timerKey];
@@ -146,58 +152,40 @@ export default function App() {
       setSeatStatus(roomKey, stationId, "idle");
     };
 
-    // Seed the page with the latest known occupancy before live events arrive.
-    const hydrateInitialData = async () => {
+    const pollCurrentOccupancy = async () => {
       try {
-        const rows = await fetchData();
+        const [cam1Reading, cam2Reading] = await Promise.all([
+          fetchCurrentOccupancy("cam-1"),
+          fetchCurrentOccupancy("cam-2"),
+        ]);
 
-        // API is newest-first. Apply oldest-first so latest reading wins.
-        [...rows].reverse().forEach(applyReading);
+        if (cam1Reading) {
+          applyReading(cam1Reading);
+        }
+
+        if (cam2Reading) {
+          applyReading(cam2Reading);
+        }
       } catch (error) {
-        console.error("Failed to fetch occupancy data", error);
+        console.error("Failed to fetch current occupancy", error);
       }
     };
 
-    hydrateInitialData();
-    // Listen for new inserts broadcast by the backend controller.
-    socket.on("new_data", applyReading);
+    pollCurrentOccupancy();
+    const pollTimer = setInterval(pollCurrentOccupancy, POLL_INTERVAL_MS);
 
     return () => {
-      socket.off("new_data", applyReading);
+      clearInterval(pollTimer);
       Object.values(idleTimersRef.current).forEach(clearTimeout);
       idleTimersRef.current = {};
     };
   }, []);
 
   // Resolve which room payload should be displayed for the currently selected room.
-  const selectedRoomSeats = useMemo(() => {
-    if (!activeRoom) {
-      return {};
-    }
-
-    const roomToken = activeRoom.replace(/^r/i, "").toLowerCase();
-    // Support a few likely camera_id formats without forcing backend changes.
-    const candidateKeys = [
-      activeRoom.toLowerCase(),
-      roomToken,
-      `room-${roomToken}`,
-      `lab-${roomToken}`,
-    ];
-
-    for (const key of candidateKeys) {
-      if (occupancyByRoom[key]) {
-        return occupancyByRoom[key];
-      }
-    }
-
-    const knownRooms = Object.keys(occupancyByRoom);
-    // If the API currently streams one room only, map it automatically.
-    if (knownRooms.length === 1) {
-      return occupancyByRoom[knownRooms[0]];
-    }
-
-    return {};
-  }, [activeRoom, occupancyByRoom]);
+  const selectedRoomSeats = useMemo(
+    () => (activeRoom ? occupancyByRoom[activeRoom] ?? {} : {}),
+    [activeRoom, occupancyByRoom],
+  );
 
   const handleSelectBuilding = (building) => {
     setSelectedBuilding(building);
@@ -217,6 +205,8 @@ export default function App() {
   // Choose what to show on the right side after the landing page.
   if (activeRoom === "r2020") {
     screenContent = <LayoutTwoZero seatStates={selectedRoomSeats} />;
+  } else if (activeRoom === "r2037") {
+    screenContent = <LayoutThreeSeven seatStates={selectedRoomSeats} />;
   } else if (activeRoom === "r2039") {
     screenContent = <LayoutThreeNine seatStates={selectedRoomSeats} />;
   } else if (selectedBuilding) {

@@ -157,3 +157,11 @@ p {
 .back-row-right-door .doorway {
   justify-self: end;
 }
+
+.room-body-2037 {
+  justify-content: center;
+}
+
+.room-seats-2037 {
+  margin: 0;
+}
