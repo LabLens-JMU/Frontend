@@ -1,69 +1,82 @@
 const pool = require("../db");
 
 const normalizePayload = (body = {}) => {
-  const stationId = body.station_id ?? body.computer_id;
-  const timestamp = body.ts_ms ?? Date.now();
+  const stationId = Number(body.station_id ?? body.computer_id);
+  const timestamp = Number(body.ts_ms ?? Date.now());
 
   return {
     camera_id: body.camera_id ?? "cam-1",
     station_id: stationId,
-    ts_ms: timestamp,
+    ts_ms: Number.isFinite(timestamp) ? timestamp : Date.now(),
     occupied: body.occupied,
     confidence: body.confidence ?? null,
   };
 };
 
-// POST data from camera system
+// POST /api/occupancy/event
 exports.receiveData = async (req, res) => {
   try {
     const { camera_id, station_id, ts_ms, occupied, confidence } =
       normalizePayload(req.body);
 
+    if (!Number.isFinite(station_id)) {
+      return res.status(400).json({ error: "station_id/computer_id is required" });
+    }
+
     const result = await pool.query(
-      `INSERT INTO occupancy 
-            (camera_id, station_id, ts_ms, occupied, confidence)
-            VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      `INSERT INTO occupancy
+        (camera_id, station_id, ts_ms, occupied, confidence)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *`,
       [camera_id, station_id, ts_ms, occupied, confidence],
     );
 
-    const newData = result.rows[0];
-
-    // Broadcast the new reading immediately so connected dashboards update in real time.
-    const io = req.app.get("io");
-    io.emit("new_data", newData);
-
-    res.json(newData);
+    return res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: "Server error" });
   }
 };
 
-// POST mock data without touching the DB; useful for real-time UI smoke tests.
-exports.receiveMockData = async (req, res) => {
+// GET /api/occupancy/current?camera_id=cam-1
+exports.getCurrent = async (req, res) => {
   try {
-    const payload = normalizePayload(req.body);
+    const cameraId = req.query.camera_id;
+    if (!cameraId) {
+      return res.status(400).json({ error: "camera_id query parameter is required" });
+    }
 
-    const io = req.app.get("io");
-    io.emit("new_data", payload);
+    const result = await pool.query(
+      `SELECT DISTINCT ON (station_id)
+          camera_id,
+          station_id AS computer_id,
+          station_id,
+          ts_ms,
+          occupied,
+          confidence
+       FROM occupancy
+       WHERE camera_id = $1
+       ORDER BY station_id, ts_ms DESC`,
+      [cameraId],
+    );
 
-    res.json({ source: "mock", ...payload });
+    return res.json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: "Server error" });
   }
 };
 
-// GET data for frontend
+// Legacy endpoint for local diagnostics
 exports.getData = async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT * FROM occupancy ORDER BY ts_ms DESC LIMIT 50",
     );
 
-    res.json(result.rows);
+    return res.json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: "Server error" });
   }
 };
