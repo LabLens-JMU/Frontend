@@ -19,9 +19,6 @@ const Seating2037 = ({ seatStates = {} }) => {
   return (
     <>
       <div className="roomContainer room-2037">
-        <section className="front-row">
-        </section>
-
         <section className="room-body room-body-2037">
           <section className="room-seats row room-seats-2037">
             {Array.from({ length: 7 }, (_, seatOffset) => {

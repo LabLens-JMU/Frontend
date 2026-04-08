@@ -33,6 +33,26 @@ const CAMERA_ROOM_MAP = {
   "cam-2": "r2037",
 };
 
+const normalizeCurrentPayload = (requestedCameraId, payload) => {
+  if (!payload) {
+    return [];
+  }
+
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+
+  // Supports shape: { camera_id: "cam-1", computers: [{ computer_id, occupied, ... }] }
+  if (Array.isArray(payload.computers)) {
+    return payload.computers.map((computer) => ({
+      camera_id: payload.camera_id ?? requestedCameraId,
+      ...computer,
+    }));
+  }
+
+  return [payload];
+};
+
 export default function App() {
   // Shape: { [roomKey]: { [stationId]: "empty" | "idle" | "full" } }
   const [occupancyByRoom, setOccupancyByRoom] = useState({});
@@ -41,18 +61,12 @@ export default function App() {
   const [showGraph, setShowGraph] = useState(false);
 
   useEffect(() => {
-    const applyReading = (reading) => {
-      const stationId = Number(reading?.station_id ?? reading?.computer_id);
+    const applyReading = (roomKey, reading) => {
+      const stationId = Number(reading?.computer_id ?? reading?.station_id);
       if (!Number.isFinite(stationId)) {
         return;
       }
 
-      const cameraId = String(reading?.camera_id ?? "")
-        .trim()
-        .toLowerCase();
-      const roomKey = CAMERA_ROOM_MAP[cameraId];
-
-      // Ignore unsupported rooms so 2039 stays a static filler room.
       if (!roomKey) {
         return;
       }
@@ -70,17 +84,20 @@ export default function App() {
 
     const pollCurrentOccupancy = async () => {
       try {
-        const [cam1Reading, cam2Reading] = await Promise.all([
+        const [cam1Readings, cam2Readings] = await Promise.all([
           fetchCurrentOccupancy("cam-1"),
           fetchCurrentOccupancy("cam-2"),
         ]);
 
-        if (cam1Reading) {
-          applyReading(cam1Reading);
+        const room2020Readings = normalizeCurrentPayload("cam-1", cam1Readings);
+        const room2037Readings = normalizeCurrentPayload("cam-2", cam2Readings);
+
+        for (const reading of room2020Readings) {
+          applyReading(CAMERA_ROOM_MAP["cam-1"], reading);
         }
 
-        if (cam2Reading) {
-          applyReading(cam2Reading);
+        for (const reading of room2037Readings) {
+          applyReading(CAMERA_ROOM_MAP["cam-2"], reading);
         }
       } catch (error) {
         console.error("Failed to fetch current occupancy", error);
