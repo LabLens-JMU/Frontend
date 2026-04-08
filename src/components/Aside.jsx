@@ -5,17 +5,17 @@ const campusData = [
     id: "b1",
     name: "Engeo",
     rooms: [
-      { id: "r2020", name: "Room 2020" },
-      { id: "r2037", name: "Room 2037" },
-      { id: "r2039", name: "Room 2039" },
+      { id: "r2020", name: "2020" },
+      { id: "r2037", name: "2037" },
+      { id: "r2039", name: "2039" },
     ],
   },
   {
     id: "b2",
     name: "King Hall",
     rooms: [
-      { id: "r201", name: "Study Room 201" },
-      { id: "r203", name: "Study Room 203" },
+      { id: "r201", name: "201" },
+      { id: "r203", name: "203" },
     ],
   },
 ];
@@ -54,8 +54,7 @@ export function Aside({
             onClick={() => onSelectRoom?.(room.id)}
             className={itemClassName}
           >
-            <span>Room</span>
-            <span>{room.name}</span>
+            <span>Room {room.name}</span>
           </div>
         );
       });

@@ -8,11 +8,11 @@ const getSeatStatus = (seatStates, seatNumber) => {
     return "full";
   }
 
-  if (state === "empty") {
-    return "empty";
+  if (state === "idle") {
+    return "idle";
   }
 
-  return "idle";
+  return "empty";
 };
 
 const Seating2039 = ({ seatStates = {} }) => {
@@ -44,7 +44,7 @@ const Seating2039 = ({ seatStates = {} }) => {
                       key={seatNumber}
                       className={`seat block ${getSeatStatus(seatStates, seatNumber)}`}
                     >
-                      <p>Seat #{seatNumber}</p>
+                      <p>{seatNumber}</p>
                     </div>
                   );
                 })}

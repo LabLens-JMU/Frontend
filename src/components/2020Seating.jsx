@@ -8,15 +8,32 @@ const getSeatStatus = (seatStates, seatNumber) => {
     return "full";
   }
 
-  if (state === "empty") {
-    return "empty";
+  if (state === "idle") {
+    return "idle";
   }
 
-  return "idle";
+  return "empty";
 };
 
 // Render one horizontal block of 6 seats, each colored by its live status.
-const renderSeatRow = (startSeat, seatStates) => (
+const renderSeatRow4 = (startSeat, seatStates) => (
+  <section className="room-seats row" key={`row-${startSeat}`}>
+    {Array.from({ length: 4 }, (_, seatOffset) => {
+      const seatNumber = startSeat + seatOffset;
+
+      return (
+        <div
+          key={seatNumber}
+          className={`seat block ${getSeatStatus(seatStates, seatNumber)}`}
+        >
+          <p>{seatNumber}</p>
+        </div>
+      );
+    })}
+  </section>
+);
+
+const renderSeatRow6 = (startSeat, seatStates) => (
   <section className="room-seats row" key={`row-${startSeat}`}>
     {Array.from({ length: 6 }, (_, seatOffset) => {
       const seatNumber = startSeat + seatOffset;
@@ -26,7 +43,7 @@ const renderSeatRow = (startSeat, seatStates) => (
           key={seatNumber}
           className={`seat block ${getSeatStatus(seatStates, seatNumber)}`}
         >
-          <p>Seat #{seatNumber}</p>
+          <p>{seatNumber}</p>
         </div>
       );
     })}
@@ -57,14 +74,14 @@ const Seating2020 = ({ seatStates = {} }) => {
           </aside>
           <div className="seat-columns">
             <section className="col">
-              {[1, 7, 13].map((startSeat) =>
-                renderSeatRow(startSeat, seatStates),
+              {[1, 5, 9].map((startSeat) =>
+                renderSeatRow4(startSeat, seatStates),
               )}
             </section>
 
             <section className="col">
-              {[19, 25, 31].map((startSeat) =>
-                renderSeatRow(startSeat, seatStates),
+              {[13, 19, 26].map((startSeat) =>
+                renderSeatRow6(startSeat, seatStates),
               )}
             </section>
           </div>

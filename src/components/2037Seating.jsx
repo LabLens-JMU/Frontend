@@ -8,11 +8,11 @@ const getSeatStatus = (seatStates, seatNumber) => {
     return "full";
   }
 
-  if (state === "empty") {
-    return "empty";
+  if (state === "idle") {
+    return "idle";
   }
 
-  return "idle";
+  return "empty";
 };
 
 const Seating2037 = ({ seatStates = {} }) => {
@@ -20,9 +20,6 @@ const Seating2037 = ({ seatStates = {} }) => {
     <>
       <div className="roomContainer room-2037">
         <section className="front-row">
-          <div className="block hor-board">
-            <p>Board</p>
-          </div>
         </section>
 
         <section className="room-body room-body-2037">
@@ -35,7 +32,7 @@ const Seating2037 = ({ seatStates = {} }) => {
                   key={seatNumber}
                   className={`seat block ${getSeatStatus(seatStates, seatNumber)}`}
                 >
-                  <p>Seat #{seatNumber}</p>
+                  <p>{seatNumber}</p>
                 </div>
               );
             })}
@@ -45,11 +42,6 @@ const Seating2037 = ({ seatStates = {} }) => {
         <section className="back-row back-row-left-door">
           <div className="block doorway">
             <p>Door</p>
-          </div>
-          <div className="boards back-boards">
-            <div className="block hor-board">
-              <p>Board</p>
-            </div>
           </div>
           <div className="back-wall-spacer" />
         </section>

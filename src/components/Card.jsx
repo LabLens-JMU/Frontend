@@ -10,7 +10,7 @@ const Card = ({ rooms = [], onSelectRoom }) => {
           className="hero-card"
           onClick={() => onSelectRoom?.(room.id)}
         >
-          <h3 className="room">{room.name}</h3>
+          <h3 className="room">Room {room.name}</h3>
           <p className="description">Occupancy: 0</p>
         </button>
       ))}
