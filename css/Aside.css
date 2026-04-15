@@ -17,7 +17,7 @@
 /* Centered Main screen aside */
 /* Larger full-width aside styles for the landing page. */
 .aside-left .aside {
-  width: 100%;
+  width: 60%;
   height: auto;
   padding: 32px;
   border-radius: 15px;

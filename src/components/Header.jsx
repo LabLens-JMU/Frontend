@@ -14,7 +14,7 @@ const Header = ({ onShowGraph }) => {
             window.location.reload();
           }}
           src={logo}
-          width="75"
+          width="100"
           alt="Logo"
         />
         <h1 className="title">LabLens</h1>
@@ -25,12 +25,12 @@ const Header = ({ onShowGraph }) => {
                 className="graph"
                 onClick={onShowGraph}
                 src={graph}
-                width="50"
+                width="75"
                 alt="graph"
               />
             </li>
             <li className="settings">
-              <img src={settings} width="50" alt="settings" />
+              <img src={settings} width="75" alt="settings" />
             </li>
           </ul>
         </nav>
