@@ -127,6 +127,10 @@ export default function App() {
     setActiveRoom(roomId);
   };
 
+  const handleBackToRooms = () => {
+    setActiveRoom(null);
+  };
+
   // Landing mode stays active until a building is selected.
   const showLandingDirectory = !selectedBuilding;
   let screenContent = null;
@@ -135,11 +139,11 @@ export default function App() {
 
   // Choose what to show on the right side after the landing page.
   if (activeRoom === "r2020") {
-    screenContent = <LayoutTwoZero seatStates={selectedRoomSeats} />;
+    screenContent = <LayoutTwoZero seatStates={selectedRoomSeats} onBack={handleBackToRooms} />;
   } else if (activeRoom === "r2037") {
-    screenContent = <LayoutThreeSeven seatStates={selectedRoomSeats} />;
+    screenContent = <LayoutThreeSeven seatStates={selectedRoomSeats} onBack={handleBackToRooms} />
   } else if (activeRoom === "r2039") {
-    screenContent = <LayoutThreeNine seatStates={selectedRoomSeats} />;
+    screenContent = <LayoutThreeNine seatStates={selectedRoomSeats} onBack={handleBackToRooms} />;
   } else if (selectedBuilding) {
     screenContent = (
       <Card rooms={selectedBuilding.rooms} onSelectRoom={handleSelectRoom} />
