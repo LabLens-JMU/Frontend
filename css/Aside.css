@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  width: 240px;
+  width: min(100%, 240px);
   background-color: var(--mediumPurple);
   padding: 20px;
   box-sizing: border-box;
@@ -17,7 +17,7 @@
 /* Centered Main screen aside */
 /* Larger full-width aside styles for the landing page. */
 .aside-left .aside {
-  width: 60%;
+  width: min(100%, 760px);
   height: auto;
   padding: 32px;
   border-radius: 15px;
@@ -77,6 +77,8 @@
   font-size: 14px;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  row-gap: 0.25rem;
 }
 
 .breadcrumb-item {
@@ -106,6 +108,9 @@
 
 /* --- List View --- */
 .contents-view {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
   padding: 8px;
 }
 
@@ -119,9 +124,14 @@
   border-radius: 6px;
   font-size: 15px;
   color: var(--slateGray);
+  min-width: 0;
   transition:
     background-color 0.15s ease,
     transform 0.1s ease;
+}
+
+.location-item span {
+  min-width: 0;
 }
 
 .location-item:hover {
@@ -152,4 +162,49 @@
   padding: 16px;
   text-align: center;
   font-size: 14px;
+}
+
+@media (max-width: 1024px) {
+  .aside {
+    width: 100%;
+    max-width: none;
+  }
+
+  .aside-left .aside {
+    padding: 24px;
+  }
+
+  .aside-left .breadcrumb-header {
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    padding: 20px 24px;
+  }
+
+  .aside-left .location-item {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    padding: 22px 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .aside {
+    padding: 14px;
+  }
+
+  .aside-left .aside {
+    padding: 16px;
+  }
+
+  .aside-left .breadcrumb-header {
+    padding: 16px;
+  }
+
+  .aside-left .contents-view {
+    padding: 18px 8px;
+    gap: 14px;
+  }
+
+  .aside-left .location-item {
+    font-size: 1.1rem;
+    padding: 18px 14px;
+  }
 }

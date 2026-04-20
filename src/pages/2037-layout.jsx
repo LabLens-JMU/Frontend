@@ -6,8 +6,10 @@ const Layout2037 = ({ seatStates = {}, onBack }) => {
   return (
     <>
       <main className="lab-room-layout">
-        <button onClick={onBack} className="back-button">← Back to Rooms</button>
-        <Seat seatStates={seatStates} />
+        <button onClick={onBack} className="back-button">&lt; Back to Rooms</button>
+        <div className="room-scroll-shell">
+          <Seat seatStates={seatStates} />
+        </div>
       </main>
     </>
   );

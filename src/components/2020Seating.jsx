@@ -1,6 +1,22 @@
 import React from "react";
 import "../../css/Seat.css";
 
+const WALL_BLOCKS = 14;
+const SEAT_GROUPS = [
+  [
+    [1, 2, 3, 4, 5, 6],
+    [7, 8, 9, 10, 11, 12],
+  ],
+  [
+    [13, 14, 15, 16, 17, 18],
+    [19, 20, 21, 22, 23, 24],
+  ],
+  [
+    [25, 26, 27, 28, 29, 30],
+    [31, 32, 33, 34, 35, 36],
+  ],
+];
+
 const getSeatStatus = (seatStates, seatNumber) => {
   const state = seatStates?.[seatNumber];
 
@@ -15,100 +31,64 @@ const getSeatStatus = (seatStates, seatNumber) => {
   return "empty";
 };
 
-// Render one horizontal block of 6 seats, each colored by its live status.
-const renderSeatRow4 = (startSeat, seatStates) => (
-  <section className="room-seats row" key={`row-${startSeat}`}>
-    {Array.from({ length: 4 }, (_, seatOffset) => {
-      const seatNumber = startSeat + seatOffset;
+const formatSeatStatus = (status) => {
+  if (status === "full") {
+    return "Full";
+  }
 
-      return (
-        <div
-          key={seatNumber}
-          className={`seat block ${getSeatStatus(seatStates, seatNumber)}`}
-        >
-          <p>{seatNumber}</p>
-        </div>
-      );
-    })}
-  </section>
-);
+  if (status === "idle") {
+    return "Idle";
+  }
 
-const renderSeatRow6 = (startSeat, seatStates) => (
-  <section className="room-seats row" key={`row-${startSeat}`}>
-    {Array.from({ length: 6 }, (_, seatOffset) => {
-      const seatNumber = startSeat + seatOffset;
-
-      return (
-        <div
-          key={seatNumber}
-          className={`seat block ${getSeatStatus(seatStates, seatNumber)}`}
-        >
-          <p>{seatNumber}</p>
-        </div>
-      );
-    })}
-  </section>
-);
+  return "Empty";
+};
 
 const Seating2020 = ({ seatStates = {} }) => {
   return (
     <>
-      <div className="roomContainer">
-        <section className="front-row">
-          <div className="block hor-board">
-            <p>Board</p>
-          </div>
-          <div className="block hor-board">
-            <p>Board</p>
-          </div>
-          <div className="block hor-board">
-            <p>Board</p>
-          </div>
+      <div className="roomContainer room-2020">
+        <section className="col wall-column">
+          {Array.from({ length: WALL_BLOCKS }, (_, index) => (
+            <div className="block board wall-block" key={`left-wall-${index + 1}`}>
+              <p>Board</p>
+            </div>
+          ))}
         </section>
 
-        <section className="room-body">
-          <aside className="left-wall">
-            <div className="block vert-board">
+        {SEAT_GROUPS.map((seatColumn, columnIndex) => (
+          <section className="col seat-column" key={`seat-column-${columnIndex + 1}`}>
+            {seatColumn.map((seatRow, rowIndex) => (
+              <section className="room-seats row" key={`seat-row-${columnIndex + 1}-${rowIndex + 1}`}>
+                {seatRow.map((seatNumber) => {
+                  const status = getSeatStatus(seatStates, seatNumber);
+
+                  return (
+                    <div
+                      key={seatNumber}
+                      className={`seat seat-2020 block ${status}`}
+                    >
+                      <p>Seat {seatNumber}</p>
+                      <p>{formatSeatStatus(status)}</p>
+                    </div>
+                  );
+                })}
+              </section>
+            ))}
+            <div className="block board wall-block">
               <p>Board</p>
             </div>
-          </aside>
-          <div className="seat-columns">
-            <section className="col">
-              {[1, 5, 9].map((startSeat) =>
-                renderSeatRow4(startSeat, seatStates),
-              )}
-            </section>
+          </section>
+        ))}
 
-            <section className="col">
-              {[13, 19, 26].map((startSeat) =>
-                renderSeatRow6(startSeat, seatStates),
-              )}
-            </section>
-          </div>
-
-          <aside className="right-wall">
-            <div className="block vert-board">
-              <p>Board</p>
-            </div>
-            <div className="block vert-board">
-              <p>Board</p>
-            </div>
-          </aside>
-        </section>
-
-        <section className="back-row">
-          <div className="block doorway">
+        <section className="col wall-column">
+          <div className="block doorway wall-block">
             <p>Door</p>
           </div>
-          <div className="boards back-boards">
-            <div className="block hor-board">
+          {Array.from({ length: WALL_BLOCKS - 1 }, (_, index) => (
+            <div className="block board wall-block" key={`right-wall-${index + 1}`}>
               <p>Board</p>
             </div>
-            <div className="block hor-board">
-              <p>Board</p>
-            </div>
-          </div>
-          <div className="back-wall-spacer" />
+          ))}
         </section>
       </div>
     </>

@@ -1,30 +1,48 @@
 header {
   display: flex;
-  width: 100vw;
-  height: 17vh;
+  width: 100%;
+  min-height: 100px;
   justify-content: space-between;
   background-color: var(--jmuPurple);
   align-items: center;
-  position: relative;
-  padding: 0 10px 0 10px;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  padding: 0.75rem 1rem;
 }
 
 .title {
-  font-size: 58px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  flex: 1 1 auto;
+  font-size: clamp(2rem, 5vw, 3.625rem);
   margin: 0;
+  text-align: center;
 }
 
 header ul li {
   list-style-type: none;
 }
 
+.logo {
+  width: clamp(72px, 10vw, 100px);
+  height: auto;
+  flex: 0 0 auto;
+}
+
+nav {
+  flex: 0 0 auto;
+}
+
 /* Nav icons */
 .list-icons {
   display: flex;
-  gap: 25px;
+  gap: clamp(0.75rem, 3vw, 1.5rem);
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.list-icons img {
+  width: clamp(44px, 7vw, 75px);
+  height: auto;
 }
 
 .logo:hover {
@@ -43,4 +61,17 @@ header ul li {
 .graph:hover {
   cursor: pointer;
   transform: scale(1.1);
+}
+
+@media (max-width: 640px) {
+  header {
+    justify-content: center;
+    min-height: auto;
+  }
+
+  .title {
+    order: 3;
+    flex-basis: 100%;
+    font-size: clamp(1.75rem, 9vw, 2.5rem);
+  }
 }

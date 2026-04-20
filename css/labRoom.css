@@ -1,5 +1,6 @@
 .lab-room-layout {
   width: 100%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -9,8 +10,21 @@
   gap: 1.5rem;
 }
 
+.room-scroll-shell {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.5rem;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
 .back-button {
   align-self: flex-start;
+  max-width: 100%;
   padding: 0.5rem 1rem;
   background-color: #007bff;
   color: white;
@@ -27,4 +41,17 @@
 
 .back-button:active {
   background-color: #004085;
+}
+
+@media (max-width: 720px) {
+  .lab-room-layout {
+    padding: 1rem;
+    align-items: stretch;
+  }
+
+  .back-button {
+    align-self: stretch;
+    font-size: 0.95rem;
+    text-align: center;
+  }
 }
