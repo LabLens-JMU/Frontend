@@ -23,12 +23,6 @@
   --isEmpty: var(--mediumGreen);
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
 html {
   background-color: lightgray;
   height: 100%;
@@ -41,8 +35,8 @@ body {
   margin: 0;
   padding: 0;
   width: 100%;
-  min-width: 320px;
-  overflow-x: hidden;
+  /*overflow-x: hidden;*/
+  /*overflow-y: hidden;*/
 }
 
 #root {
@@ -55,24 +49,20 @@ body {
 
 .top {
   display: flex;
-  width: 100%;
 }
 
 .left {
   display: flex;
   flex: 0 0 auto;
-  min-width: 0;
 }
 
 .center {
   display: flex;
   width: 100%;
   min-height: calc(100vh - 17vh);
-  align-items: stretch;
 }
 
 .aside-center {
-  padding: 2rem 1.5rem;
   align-items: center;
   justify-content: center;
   background-image:
@@ -93,28 +83,4 @@ body {
   display: flex;
   flex: 1;
   min-width: 0;
-  overflow: hidden;
-}
-
-@media (max-width: 1024px) {
-  .center {
-    flex-direction: column;
-    min-height: auto;
-  }
-
-  .left,
-  .screen,
-  .aside-left {
-    width: 100%;
-  }
-
-  .screen {
-    min-height: 0;
-  }
-}
-
-@media (max-width: 640px) {
-  .aside-center {
-    padding: 1rem;
-  }
 }
