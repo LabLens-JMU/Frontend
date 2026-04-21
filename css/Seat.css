@@ -2,7 +2,7 @@
   width: 3em;
   height: 3em;
   border-radius: 10px;
-  border: 2px solid black;
+  border: 2px solid var(--seat-border);
   margin: 5px;
   padding: 5px;
 }
@@ -18,13 +18,13 @@
 }
 
 .seat.empty {
-  background: rgb(17, 208, 17);
+  background: var(--isEmpty);
 }
 .seat.idle {
-  background: rgb(255, 217, 0);
+  background: var(--isIdle);
 }
 .seat.full {
-  background: red;
+  background: var(--isFull);
 }
 
 .roomContainer {
@@ -34,8 +34,8 @@
   align-items: stretch;
   gap: 1.5rem;
   padding: 20px;
-  border: 2px solid black;
-  background-color: rgba(255, 255, 255, 0.2);
+  border: 2px solid var(--room-border);
+  background-color: var(--room-surface);
   width: fit-content;
   max-width: min(100%, 90rem);
   margin: 0 auto;
@@ -51,7 +51,7 @@
 }
 
 .row {
-  border: 3px solid black;
+  border: 3px solid var(--room-border);
 }
 
 .col {
@@ -62,8 +62,8 @@
 }
 
 .vert-board {
-  color: gray;
-  background-color: white;
+  color: var(--board-text);
+  background-color: var(--board-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,12 +74,12 @@
 }
 
 .doorway {
-  background-color: saddlebrown;
+  background-color: var(--door-bg);
   min-width: 5rem;
 }
 
 .doorway p {
-  color: white;
+  color: var(--door-text);
   margin: 0;
 }
 
@@ -109,8 +109,8 @@ p {
 }
 
 .hor-board {
-  color: gray;
-  background-color: white;
+  color: var(--board-text);
+  background-color: var(--board-bg);
   width: 12em;
   display: flex;
   align-items: center;

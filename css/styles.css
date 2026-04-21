@@ -21,20 +21,91 @@
   --isFull: var(--jmuRed);
   --isIdle: rgb(255, 240, 27);
   --isEmpty: var(--mediumGreen);
+
+  /* Light theme tokens */
+  --page-bg: lightgray;
+  --text-primary: #ffffff;
+  --text-on-accent: #ffffff;
+  --header-bg: var(--jmuPurple);
+  --content-surface: var(--mediumPurple);
+  --overlay-surface: rgba(181, 153, 206, 0.85);
+  --surface-default: #ffffff;
+  --surface-muted: #f8f9fa;
+  --border-default: #e0e0e0;
+  --text-default: var(--slateGray);
+  --text-muted: #888888;
+  --interactive-text: var(--darkBlue);
+  --interactive-text-hover: var(--mediumBlue);
+  --interactive-hover-bg: #f0f4ff;
+  --interactive-active-bg: #e6ecff;
+  --card-bg: var(--darkGray);
+  --card-title: #ffffff;
+  --card-description: var(--jmuGold);
+  --card-hover-border: var(--jmuGold);
+  --card-hover-shadow: rgba(203, 182, 119, 0.2);
+  --status-badge-bg: #333333;
+  --button-outline: var(--jmuGold);
+  --button-outline-text: var(--jmuGold);
+  --room-border: #000000;
+  --room-surface: rgba(255, 255, 255, 0.2);
+  --board-bg: #ffffff;
+  --board-text: #808080;
+  --door-bg: saddlebrown;
+  --door-text: #ffffff;
+  --seat-border: #000000;
+  --landing-overlay: rgba(69, 0, 132, 0.35);
+}
+
+:root[data-theme="dark"] {
+  --page-bg: #1b1427;
+  --text-primary: #f4efe1;
+  --text-on-accent: #f4efe1;
+  --header-bg: #2a0f48;
+  --content-surface: #312046;
+  --overlay-surface: rgba(49, 32, 70, 0.9);
+  --surface-default: #241833;
+  --surface-muted: #2d2240;
+  --border-default: #4a3d60;
+  --text-default: #f4efe1;
+  --text-muted: #c2b5d4;
+  --interactive-text: #cbb677;
+  --interactive-text-hover: #d8c48b;
+  --interactive-hover-bg: #3a2b53;
+  --interactive-active-bg: #4a3967;
+  --card-bg: #2a1d3c;
+  --card-title: #f4efe1;
+  --card-description: #cbb677;
+  --card-hover-border: #cbb677;
+  --card-hover-shadow: rgba(203, 182, 119, 0.25);
+  --status-badge-bg: #433055;
+  --button-outline: #cbb677;
+  --button-outline-text: #f4efe1;
+  --room-border: #cbb677;
+  --room-surface: rgba(36, 24, 51, 0.75);
+  --board-bg: #e8deca;
+  --board-text: #2a0f48;
+  --door-bg: #654327;
+  --door-text: #f4efe1;
+  --seat-border: #cbb677;
+  --landing-overlay: rgba(27, 20, 39, 0.5);
 }
 
 html {
-  background-color: lightgray;
+  background-color: var(--page-bg);
   height: 100%;
 }
 
 body {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  color: white;
+  color: var(--text-primary);
   height: 100%;
   margin: 0;
   padding: 0;
   width: 100%;
+  background-color: var(--page-bg);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
   /*overflow-x: hidden;*/
   /*overflow-y: hidden;*/
 }
