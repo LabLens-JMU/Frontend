@@ -4,7 +4,7 @@ LabLens is a lab occupancy tracking system that shows real-time seat availabilit
 
 ## Overview
 
-This project uses a MERN stack and computer vision to monitor computer lab usage. The frontend focuses on displaying live occupancy data and historical trends in a clear and user-friendly interface.
+This project uses a MERN stack variation (MySQL) plus Vite and JSX. This is an IoT web platform project to monitor computer lab usage. The frontend focuses on displaying live occupancy data and historical trends in a clear and user-friendly interface.
 
 ## Features
 
@@ -20,6 +20,7 @@ This project uses a MERN stack and computer vision to monitor computer lab usage
 - React
 - JSX
 - CSS
+- JS
 
 **Backend**
 
@@ -28,7 +29,7 @@ This project uses a MERN stack and computer vision to monitor computer lab usage
 
 **Database**
 
-- PostgreSQL
+- Digital Ocean (MySQL)
 
 **Hardware**
 
@@ -38,8 +39,8 @@ This project uses a MERN stack and computer vision to monitor computer lab usage
 
 **Deployment**
 
-- Apache (Bluehost)
+- Github Pages
 
 ## Architecture
 
-Camera → Backend API → Database → React Frontend
+Camera → Backend API → Database → Center API → React Frontend
