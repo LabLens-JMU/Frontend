@@ -45,6 +45,7 @@
   --door-bg: saddlebrown;
   --door-text: #ffffff;
   --seat-border: #000000;
+  --landing-overlay: rgba(69, 0, 132, 0.35);
 }
 
 :root[data-theme="dark"] {
@@ -78,20 +79,25 @@
   --door-bg: #654327;
   --door-text: #f4efe1;
   --seat-border: #cbb677;
+  --landing-overlay: rgba(27, 20, 39, 0.5);
 }
 
 html {
-  background-color: lightgray;
+  background-color: var(--page-bg);
   height: 100%;
 }
 
 body {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  color: white;
+  color: var(--text-primary);
   height: 100%;
   margin: 0;
   padding: 0;
   width: 100%;
+  background-color: var(--page-bg);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
   /*overflow-x: hidden;*/
   /*overflow-y: hidden;*/
 }
