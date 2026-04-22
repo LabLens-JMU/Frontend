@@ -11,7 +11,7 @@
   --jmuRed: #a4232b;
   /* Status colors */
   --isFull: rgb(225, 0, 0);
-  --isIdle: rgb(255, 240, 27);
+  --isIdle: rgb(216, 202, 2);
   --isEmpty: rgb(0, 194, 0);
 
   /* Light theme tokens */
