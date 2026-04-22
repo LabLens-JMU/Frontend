@@ -11,7 +11,9 @@ const Card = ({ rooms = [], onSelectRoom }) => {
           onClick={() => onSelectRoom?.(room.id)}
         >
           <h3 className="room">Room {room.name}</h3>
-          <p className="description">Occupancy: 0</p>
+          <p className="description">
+            Occupancy: {room.occupied_count ?? 0}/{room.room_total ?? 0} occupied
+          </p>
         </button>
       ))}
     </section>

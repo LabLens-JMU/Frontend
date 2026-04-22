@@ -63,9 +63,38 @@ exports.receiveMockData = async (req, res) => {
 // GET data for frontend
 exports.getData = async (req, res) => {
   try {
-    const [rows] = await pool.query(
-      "SELECT * FROM occupancy ORDER BY ts_ms DESC LIMIT 50",
-    );
+    const sinceTs = Number(req.query.since_ts);
+    let rows;
+
+    if (Number.isFinite(sinceTs)) {
+      const [historyRows] = await pool.query(
+        `SELECT *
+           FROM occupancy
+          WHERE ts_ms >= ?
+         UNION ALL
+         SELECT o.*
+           FROM occupancy o
+           JOIN (
+             SELECT lower(camera_id) AS camera_id, computer_id, MAX(ts_ms) AS max_ts
+               FROM occupancy
+              WHERE ts_ms < ?
+              GROUP BY lower(camera_id), computer_id
+           ) seed
+             ON lower(o.camera_id) = seed.camera_id
+            AND o.computer_id = seed.computer_id
+            AND o.ts_ms = seed.max_ts
+         ORDER BY ts_ms ASC`,
+        [sinceTs, sinceTs],
+      );
+
+      rows = historyRows;
+    } else {
+      const [recentRows] = await pool.query(
+        "SELECT * FROM occupancy ORDER BY ts_ms DESC LIMIT 50",
+      );
+
+      rows = recentRows;
+    }
 
     res.json(rows);
   } catch (err) {
