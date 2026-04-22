@@ -3,12 +3,10 @@ header {
   width: 100vw;
   height: 17vh;
   justify-content: space-between;
-  background-color: var(--header-bg);
-  color: var(--text-on-accent);
+  background-color: var(--jmuPurple);
   align-items: center;
   position: relative;
   padding: 0 10px 0 10px;
-  transition: background-color 0.25s ease;
 }
 
 .title {
@@ -45,25 +43,4 @@ header ul li {
 .graph:hover {
   cursor: pointer;
   transform: scale(1.1);
-}
-
-.theme-toggle {
-  display: flex;
-  align-items: center;
-}
-
-.theme-toggle-button {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.theme-toggle-button:hover {
-  transform: scale(1.05);
-}
-
-.theme-toggle-button img {
-  filter: brightness(0) invert(1);
-  padding-right: 15px;
 }

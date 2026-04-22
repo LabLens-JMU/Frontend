@@ -3,14 +3,13 @@
   flex-direction: column;
   justify-content: flex-start;
   width: 240px;
-  background-color: var(--content-surface);
+  background-color: var(--mediumPurple);
   padding: 20px;
   box-sizing: border-box;
-  transition: background-color 0.25s ease;
 }
 
 .aside ul li a {
-  color: var(--text-default);
+  color: black;
   font-weight: 200;
   list-style-type: none;
 }
@@ -22,7 +21,7 @@
   height: auto;
   padding: 32px;
   border-radius: 15px;
-  background-color: var(--overlay-surface);
+  background-color: rgba(181, 153, 206, 0.85);
   backdrop-filter: blur(4px);
 }
 
@@ -62,19 +61,19 @@
 .selector-container {
   width: 100%;
   max-width: 400px; /* Adjust this if you want it wider or narrower */
-  border: 1px solid var(--border-default);
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
   font-family: Helvetica, Arial, sans-serif;
   overflow: hidden;
-  background-color: var(--surface-default);
+  background-color: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Soft shadow for depth */
 }
 
 /* --- Header / Navigation Bar --- */
 .breadcrumb-header {
   padding: 12px 16px;
-  background-color: var(--surface-muted);
-  border-bottom: 1px solid var(--border-default);
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
   font-size: 14px;
   display: flex;
   align-items: center;
@@ -82,18 +81,18 @@
 
 .breadcrumb-item {
   cursor: pointer;
-  color: var(--interactive-text);
+  color: var(--darkBlue);
   transition: color 0.2s ease;
 }
 
 .breadcrumb-item:hover {
-  color: var(--interactive-text-hover);
+  color: var(--mediumBlue);
   text-decoration: underline;
 }
 
 /* The active state is for the current location (unclickable) */
 .breadcrumb-item.active {
-  color: var(--text-default);
+  color: #333333;
   font-weight: 600;
   pointer-events: none;
   text-decoration: none;
@@ -101,7 +100,7 @@
 
 .breadcrumb-separator {
   margin: 0 8px;
-  color: var(--text-muted);
+  color: #888888;
   font-size: 12px;
 }
 
@@ -119,14 +118,14 @@
   align-items: center;
   border-radius: 6px;
   font-size: 15px;
-  color: var(--text-default);
+  color: var(--slateGray);
   transition:
     background-color 0.15s ease,
     transform 0.1s ease;
 }
 
 .location-item:hover {
-  background-color: var(--interactive-hover-bg); /* Very subtle blue highlight on hover */
+  background-color: #f0f4ff; /* Very subtle blue highlight on hover */
 }
 
 .location-item:active {
@@ -134,21 +133,21 @@
 }
 
 .location-item.active {
-  background-color: var(--interactive-active-bg);
-  color: var(--interactive-text);
+  background-color: #e6ecff;
+  color: var(--darkBlue);
   font-weight: 600;
 }
 
 /* Pushes the arrow to the far right of the row */
 .chevron-right {
   margin-left: auto;
-  color: var(--text-muted);
+  color: #adb5bd;
   font-size: 12px;
 }
 
 /* Used if a building has an empty rooms array */
 .empty-location {
-  color: var(--text-muted);
+  color: #888888;
   font-style: italic;
   padding: 16px;
   text-align: center;

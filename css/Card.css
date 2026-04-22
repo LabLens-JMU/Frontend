@@ -10,7 +10,7 @@
 }
 
 .hero-card {
-  background-color: var(--card-bg);
+  background-color: grey;
   border: none;
   border-radius: 12px;
   padding: 24px;
@@ -24,8 +24,8 @@
 
 .hero-card:hover {
   transform: translateY(-5px);
-  border-color: var(--card-hover-border);
-  box-shadow: 0 10px 20px var(--card-hover-shadow);
+  border-color: #00ff9d; /* Cyber Green */
+  box-shadow: 0 10px 20px rgba(0, 255, 157, 0.1);
   cursor: pointer;
 }
 
@@ -33,18 +33,18 @@
   margin: 0 0 12px 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--card-title);
+  color: white;
 }
 
 .description {
-  color: var(--card-description);
+  color: goldenrod;
   line-height: 1.5;
   margin-bottom: 20px;
 }
 
 .badge {
   display: inline-block;
-  background: var(--status-badge-bg);
+  background: #333;
   padding: 4px 10px;
   border-radius: 4px;
   font-size: 0.75rem;
@@ -54,8 +54,8 @@
 
 .button {
   background: none;
-  border: 1px solid var(--button-outline);
-  color: var(--button-outline-text);
+  border: 1px solid #00ff9d;
+  color: #00ff9d;
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;

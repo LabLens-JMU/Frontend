@@ -28,24 +28,9 @@ const toSeatState = (occupied) => {
 };
 
 const POLL_INTERVAL_MS = Number(import.meta.env.VITE_OCCUPANCY_POLL_MS ?? 3000);
-const THEME_STORAGE_KEY = "lablens-theme";
 const CAMERA_ROOM_MAP = {
   "cam-1": "r2020",
   "cam-2": "r2037",
-};
-
-const getInitialTheme = () => {
-  if (typeof window === "undefined") {
-    return "light";
-  }
-
-  const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
-
-  if (savedTheme === "light" || savedTheme === "dark") {
-    return savedTheme;
-  }
-
-  return "light";
 };
 
 const normalizeCurrentPayload = (requestedCameraId, payload) => {
@@ -74,12 +59,6 @@ export default function App() {
   const [activeRoom, setActiveRoom] = useState(null);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
   const [showGraph, setShowGraph] = useState(false);
-  const [theme, setTheme] = useState(getInitialTheme);
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
-  }, [theme]);
 
   useEffect(() => {
     const applyReading = (roomKey, reading) => {
@@ -152,10 +131,6 @@ export default function App() {
     setActiveRoom(null);
   };
 
-  const handleToggleTheme = () => {
-    setTheme((currentTheme) => (currentTheme === "light" ? "dark" : "light"));
-  };
-
   // Landing mode stays active until a building is selected.
   const showLandingDirectory = !selectedBuilding;
   let screenContent = null;
@@ -205,11 +180,7 @@ export default function App() {
   return (
     <div className="main">
       <section className="top">
-        <Header
-          onShowGraph={() => setShowGraph(true)}
-          theme={theme}
-          onToggleTheme={handleToggleTheme}
-        />
+        <Header onShowGraph={() => setShowGraph(true)} />
       </section>
       {mainContent}
     </div>
