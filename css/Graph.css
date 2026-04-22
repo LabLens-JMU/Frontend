@@ -1,4 +1,17 @@
 .chart-container {
-  width: 800px;
+  width: min(100%, 960px);
+  height: 520px;
   margin: 0 auto;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.graph-meta {
+  margin: 0.5rem 0 0;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.graph-error {
+  color: #b91c1c;
 }

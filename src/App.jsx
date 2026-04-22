@@ -32,7 +32,10 @@ const THEME_STORAGE_KEY = "lablens-theme";
 const CAMERA_ROOM_MAP = {
   "cam-1": "r2020",
   "cam-2": "r2037",
+  "cam-3": "r2039",
 };
+const CAMERA_IDS = Object.keys(CAMERA_ROOM_MAP);
+const isSeatOccupied = (seatState) => seatState && seatState !== "empty";
 
 const getInitialTheme = () => {
   if (typeof window === "undefined") {
@@ -105,21 +108,19 @@ export default function App() {
 
     const pollCurrentOccupancy = async () => {
       try {
-        const [cam1Readings, cam2Readings] = await Promise.all([
-          fetchCurrentOccupancy("cam-1"),
-          fetchCurrentOccupancy("cam-2"),
-        ]);
+        const roomReadings = await Promise.all(
+          CAMERA_IDS.map((cameraId) => fetchCurrentOccupancy(cameraId)),
+        );
 
-        const room2020Readings = normalizeCurrentPayload("cam-1", cam1Readings);
-        const room2037Readings = normalizeCurrentPayload("cam-2", cam2Readings);
+        roomReadings.forEach((payload, index) => {
+          const cameraId = CAMERA_IDS[index];
+          const roomKey = CAMERA_ROOM_MAP[cameraId];
+          const readings = normalizeCurrentPayload(cameraId, payload);
 
-        for (const reading of room2020Readings) {
-          applyReading(CAMERA_ROOM_MAP["cam-1"], reading);
-        }
-
-        for (const reading of room2037Readings) {
-          applyReading(CAMERA_ROOM_MAP["cam-2"], reading);
-        }
+          for (const reading of readings) {
+            applyReading(roomKey, reading);
+          }
+        });
       } catch (error) {
         console.error("Failed to fetch current occupancy", error);
       }
@@ -137,6 +138,19 @@ export default function App() {
   const selectedRoomSeats = useMemo(
     () => (activeRoom ? occupancyByRoom[activeRoom] ?? {} : {}),
     [activeRoom, occupancyByRoom],
+  );
+  const roomsWithOccupancy = useMemo(
+    () =>
+      (selectedBuilding?.rooms ?? []).map((room) => {
+        const roomSeats = occupancyByRoom[room.id] ?? {};
+        const occupiedCount = Object.values(roomSeats).filter(isSeatOccupied).length;
+
+        return {
+          ...room,
+          occupied_count: occupiedCount,
+        };
+      }),
+    [occupancyByRoom, selectedBuilding],
   );
 
   const handleSelectBuilding = (building) => {
@@ -171,7 +185,7 @@ export default function App() {
     screenContent = <LayoutThreeNine seatStates={selectedRoomSeats} onBack={handleBackToRooms} />;
   } else if (selectedBuilding) {
     screenContent = (
-      <Card rooms={selectedBuilding.rooms} onSelectRoom={handleSelectRoom} />
+      <Card rooms={roomsWithOccupancy} onSelectRoom={handleSelectRoom} />
     );
   }
 
