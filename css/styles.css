@@ -3,24 +3,16 @@
   --jmuPurple: #450084;
   --jmuGold: #cbb677;
   --mediumPurple: #b599ce;
-  --lightPurple: #dacce6;
-  --darkGold: #ad9c65;
-  --lightGold: #f4efe1;
   --slateGray: #333333;
   --darkGray: #595959;
-  --mediumGray: #b2b2b2;
-  --lightGray: #d6d6d6;
-  --darkGreen: #5f791c;
   --darkBlue: #3c738b;
   --mediumGreen: #adcc23;
   --mediumBlue: #5498b6;
-  --lightGreen: #deeba7;
-  --lightBlue: #d2ebf5;
   --jmuRed: #a4232b;
   /* Status colors */
-  --isFull: var(--jmuRed);
+  --isFull: rgb(225, 0, 0);
   --isIdle: rgb(255, 240, 27);
-  --isEmpty: var(--mediumGreen);
+  --isEmpty: rgb(0, 194, 0);
 
   /* Light theme tokens */
   --page-bg: lightgray;
@@ -53,7 +45,6 @@
   --door-bg: saddlebrown;
   --door-text: #ffffff;
   --seat-border: #000000;
-  --landing-overlay: rgba(69, 0, 132, 0.35);
 }
 
 :root[data-theme="dark"] {
@@ -87,7 +78,6 @@
   --door-bg: #654327;
   --door-text: #f4efe1;
   --seat-border: #cbb677;
-  --landing-overlay: rgba(27, 20, 39, 0.5);
 }
 
 html {
