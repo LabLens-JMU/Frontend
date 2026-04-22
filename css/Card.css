@@ -11,7 +11,7 @@
 }
 
 .hero-card {
-  background-color: grey;
+  background-color: var(--lightGray);
   border: none;
   border-radius: 12px;
   padding: 24px;
@@ -26,8 +26,7 @@
 
 .hero-card:hover {
   transform: translateY(-5px);
-  border-color: #00ff9d; /* Cyber Green */
-  box-shadow: 0 10px 20px rgba(0, 255, 157, 0.1);
+  box-shadow: 0 10px 20px var(--jmuGold);
   cursor: pointer;
 }
 
@@ -39,7 +38,8 @@
 }
 
 .description {
-  color: goldenrod;
+  color: var(--jmuGold);
+  font-size: 0.75rem;
   line-height: 1.5;
   margin-bottom: 20px;
 }
@@ -56,8 +56,6 @@
 
 .button {
   background: none;
-  border: 1px solid #00ff9d;
-  color: #00ff9d;
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;

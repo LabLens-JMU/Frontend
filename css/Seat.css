@@ -166,3 +166,10 @@ p {
 .room-seats-2037 {
   margin: 0;
 }
+
+@media (max-width: 720px) {
+  .roomContainer {
+    border: none;
+    background-color: transparent;
+  }
+}
