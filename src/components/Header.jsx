@@ -6,36 +6,49 @@ import settings from "../assets/images/Settings.png";
 
 const Header = ({ onShowGraph }) => {
   return (
-    <>
-      <header>
+    <header className="app-header">
+      <button
+        type="button"
+        className="header-logo-button"
+        onClick={() => {
+          window.location.reload();
+        }}
+        aria-label="Reload page"
+      >
         <img
           className="logo"
-          onClick={() => {
-            window.location.reload();
-          }}
           src={logo}
           width="100"
           alt="Logo"
         />
-        <h1 className="title">LabLens</h1>
-        <nav>
-          <ul className="list-icons">
-            <li className="graph">
-              <img
-                className="graph"
-                onClick={onShowGraph}
-                src={graph}
-                width="75"
-                alt="graph"
-              />
-            </li>
-            <li className="settings">
-              <img src={settings} width="75" alt="settings" />
-            </li>
-          </ul>
-        </nav>
-      </header>
-    </>
+      </button>
+      <h1 className="title">LabLens</h1>
+      <button
+        type="button"
+        className="header-icon-button graph-button"
+        onClick={onShowGraph}
+        aria-label="Open graph"
+      >
+        <img
+          className="graph"
+          src={graph}
+          width="75"
+          alt="graph"
+        />
+      </button>
+      <button
+        type="button"
+        className="header-icon-button settings-button"
+        aria-label="Open settings"
+      >
+        <img
+          className="settings-icon"
+          src={settings}
+          width="75"
+          alt="settings"
+        />
+      </button>
+    </header>
   );
 };
 

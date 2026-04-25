@@ -1,77 +1,108 @@
-header {
-  display: flex;
+header.app-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-areas: "logo title graph settings";
+  align-items: center;
   width: 100%;
   min-height: 100px;
-  justify-content: space-between;
   background-color: var(--jmuPurple);
-  align-items: center;
-  flex-wrap: wrap;
   gap: 0.75rem 1rem;
   padding: 0.75rem 1rem;
 }
 
-.title {
-  flex: 1 1 auto;
-  font-size: clamp(2rem, 5vw, 3.625rem);
-  margin: 0;
-  text-align: center;
+.header-logo-button {
+  grid-area: logo;
+  justify-self: start;
 }
 
-header ul li {
-  list-style-type: none;
+.title {
+  grid-area: title;
+  margin: 0;
+  text-align: center;
+  font-size: clamp(2rem, 5vw, 3.625rem);
+}
+
+.graph-button {
+  grid-area: graph;
+  justify-self: end;
+}
+
+.settings-button {
+  grid-area: settings;
+  justify-self: end;
+}
+
+.header-icon-button,
+.header-logo-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  line-height: 0;
+}
+
+.header-icon-button:hover,
+.header-logo-button:hover {
+  cursor: pointer;
 }
 
 .logo {
   width: clamp(72px, 10vw, 100px);
   height: auto;
-  flex: 0 0 auto;
+  display: block;
 }
 
-nav {
-  flex: 0 0 auto;
-}
-
-/* Nav icons */
-.list-icons {
-  display: flex;
-  gap: clamp(0.75rem, 3vw, 1.5rem);
-  align-items: center;
-  margin: 0;
-  padding: 0;
-}
-
-.list-icons img {
+.graph,
+.settings-icon {
   width: clamp(44px, 7vw, 75px);
   height: auto;
-}
-
-.logo:hover {
-  cursor: pointer;
-  transform: scale(1.1);
-}
-
-.settings {
-  padding-right: 15px;
+  display: block;
 }
 
 .graph {
   filter: brightness(0) invert(1);
 }
 
-.graph:hover {
-  cursor: pointer;
+.logo:hover,
+.graph:hover,
+.settings-icon:hover {
   transform: scale(1.1);
 }
 
 @media (max-width: 720px) {
-  header {
-    justify-content: center;
+  header.app-header {
     min-height: auto;
   }
 
   .title {
-    order: 3;
-    flex-basis: 100%;
     font-size: clamp(1.75rem, 9vw, 2.5rem);
+  }
+}
+
+@media (max-width: 480px) {
+  header.app-header {
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-areas:
+      "graph logo settings"
+      "title title title";
+    row-gap: 0.5rem;
+  }
+
+  .header-logo-button {
+    justify-self: center;
+  }
+
+  .graph-button {
+    justify-self: start;
+  }
+
+  .settings-button {
+    justify-self: end;
+  }
+
+  .logo {
+    width: clamp(72px, 22vw, 100px);
   }
 }

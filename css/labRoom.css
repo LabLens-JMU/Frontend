@@ -22,6 +22,10 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.room-scroll-shell > * {
+  flex: 0 0 auto;
+}
+
 .back-button {
   align-self: flex-start;
   max-width: 100%;
@@ -47,6 +51,14 @@
   .lab-room-layout {
     padding: 1rem;
     align-items: stretch;
+  }
+
+  .room-scroll-shell {
+    justify-content: flex-start;
+  }
+
+  .room-scroll-shell > .roomContainer {
+    margin: 0;
   }
 
   .back-button {
