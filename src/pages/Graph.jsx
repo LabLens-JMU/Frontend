@@ -5,11 +5,12 @@ import {
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import { fetchCurrentOccupancy, fetchData } from "../../api/dataApi";
 import "../../css/Graph.css";
 
@@ -18,6 +19,7 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
@@ -25,7 +27,16 @@ ChartJS.register(
 
 const FIVE_MINUTES_MS = 5 * 60 * 1000;
 const HOURS_TO_SHOW = 24;
+const DAYS_TO_SHOW = 7;
+const WEEKLY_HOURS_TO_SHOW = DAYS_TO_SHOW * 24;
 const EMPTY_STATE = "0";
+const FUTURE_SKEW_TOLERANCE_MS = 5 * 60 * 1000;
+const TOTAL_LAB_SEATS = 62;
+const GRAPH_MODE = {
+  LINE: "line",
+  BAR: "bar",
+};
+const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const ROOM_CONFIG = [
   {
     cameraId: "cam-1",
@@ -86,12 +97,32 @@ const buildHourBuckets = (now) => {
   });
 };
 
-const normalizeHistory = (payload) => {
-  if (!Array.isArray(payload)) {
-    return [];
+const buildRollingHourBuckets = (now, totalHours) => {
+  const currentHour = startOfHour(now);
+  return Array.from({ length: totalHours }, (_, index) => {
+    const hourStart = currentHour - (totalHours - index - 1) * 60 * 60 * 1000;
+
+    return {
+      hourStart,
+      hourEnd: hourStart + 60 * 60 * 1000 - 1,
+    };
+  });
+};
+
+const getHistoryRows = (payload) => {
+  if (Array.isArray(payload)) {
+    return payload;
   }
 
-  return payload
+  if (Array.isArray(payload?.events)) {
+    return payload.events;
+  }
+
+  return [];
+};
+
+const normalizeHistory = (payload) => {
+  return getHistoryRows(payload)
     .map((reading) => {
       const ts = toMs(reading?.ts_ms);
       const stationId = toStationId(reading);
@@ -259,11 +290,122 @@ const buildHourlyDatasets = (historyRows, currentRows, now) => {
   });
 };
 
+const buildRoomStationKeys = (stationHistoryMap) => {
+  const allowedRooms = new Set(ROOM_CONFIG.map((room) => room.cameraId));
+
+  return Array.from(stationHistoryMap.keys()).filter((key) => {
+    const [cameraId] = key.split(":");
+    return allowedRooms.has(cameraId);
+  });
+};
+
+const resolveOccupiedCountAtTimestamp = (
+  stationKeys,
+  stationHistoryMap,
+  currentStateMap,
+  timestamp,
+  { allowCurrentFallback = false } = {},
+) => {
+  let occupiedCount = 0;
+  let sampledStations = 0;
+
+  for (const stationKey of stationKeys) {
+    const events = stationHistoryMap.get(stationKey) ?? [];
+    const currentState = currentStateMap.get(stationKey);
+    const stationState = resolveStationStateAtTimestamp(events, currentState, timestamp, {
+      allowCurrentFallback,
+    });
+
+    if (stationState == null) {
+      continue;
+    }
+
+    sampledStations += 1;
+    if (isOccupied(stationState)) {
+      occupiedCount += 1;
+    }
+  }
+
+  return { occupiedCount, sampledStations };
+};
+
+const buildWeeklyAvailabilityDataset = (
+  historyRows,
+  currentRows,
+  now,
+  totalSeats = TOTAL_LAB_SEATS,
+) => {
+  const hourBuckets = buildRollingHourBuckets(now, WEEKLY_HOURS_TO_SHOW);
+  const stationHistoryMap = buildStationHistoryMap(historyRows, currentRows);
+  const currentStateMap = buildCurrentStateMap(currentRows);
+  const stationKeys = buildRoomStationKeys(stationHistoryMap);
+  const weekdayTotals = WEEKDAY_LABELS.map(() => ({ availableSum: 0, samples: 0 }));
+
+  hourBuckets.forEach(({ hourStart, hourEnd }, index) => {
+    const { occupiedCount, sampledStations } = resolveOccupiedCountAtTimestamp(
+      stationKeys,
+      stationHistoryMap,
+      currentStateMap,
+      hourEnd,
+      { allowCurrentFallback: index === hourBuckets.length - 1 },
+    );
+
+    if (sampledStations === 0) {
+      return;
+    }
+
+    const weekdayIndex = new Date(hourStart).getDay();
+    const availableSeats = Math.max(totalSeats - occupiedCount, 0);
+    weekdayTotals[weekdayIndex].availableSum += availableSeats;
+    weekdayTotals[weekdayIndex].samples += 1;
+  });
+
+  return {
+    labels: WEEKDAY_LABELS,
+    datasets: [
+      {
+        label: `Avg available seats (x/${totalSeats})`,
+        data: weekdayTotals.map(({ availableSum, samples }) =>
+          samples > 0 ? Number((availableSum / samples).toFixed(1)) : null,
+        ),
+        backgroundColor: "rgba(34, 197, 94, 0.55)",
+        borderColor: "rgb(22, 163, 74)",
+        borderWidth: 1.5,
+      },
+    ],
+  };
+};
+
+const getLatestHistoryTimestamp = (historyRows) => {
+  if (!Array.isArray(historyRows) || historyRows.length === 0) {
+    return null;
+  }
+
+  return historyRows.reduce((latest, row) => Math.max(latest, row.ts ?? 0), 0);
+};
+
+const resolveTimelineNow = (clockNow, historyRows) => {
+  const latestHistoryTs = getLatestHistoryTimestamp(historyRows);
+
+  if (!latestHistoryTs) {
+    return clockNow;
+  }
+
+  // Some data sources can drift ahead of client time; anchor to latest source time
+  // so recent hourly history still plots instead of collapsing to live-only dots.
+  if (latestHistoryTs - clockNow > FUTURE_SKEW_TOLERANCE_MS) {
+    return latestHistoryTs;
+  }
+
+  return clockNow;
+};
+
 const Graph = () => {
   const [chartRows, setChartRows] = useState({ history: [], current: [] });
   const [lastUpdated, setLastUpdated] = useState(null);
   const [error, setError] = useState("");
   const [clockTick, setClockTick] = useState(Date.now());
+  const [chartMode, setChartMode] = useState(GRAPH_MODE.LINE);
 
   useEffect(() => {
     let cancelled = false;
@@ -271,8 +413,10 @@ const Graph = () => {
     const loadGraphData = async () => {
       try {
         const now = Date.now();
+        const historySinceTs =
+          startOfHour(now) - (WEEKLY_HOURS_TO_SHOW - 1) * 60 * 60 * 1000;
         const [historyPayload, ...currentPayloads] = await Promise.all([
-          fetchData({ sinceTs: startOfHour(now) - (HOURS_TO_SHOW - 1) * 60 * 60 * 1000 }),
+          fetchData({ sinceTs: historySinceTs }),
           ...ROOM_CONFIG.map((room) =>
             fetchCurrentOccupancy(room.cameraId).catch((fetchError) => {
               if (fetchError?.message?.includes("404")) {
@@ -326,7 +470,7 @@ const Graph = () => {
   }, []);
 
   const chartData = useMemo(() => {
-    const now = clockTick;
+    const now = resolveTimelineNow(clockTick, chartRows.history);
     const hours = buildHourBuckets(now);
 
     return {
@@ -335,7 +479,7 @@ const Graph = () => {
     };
   }, [chartRows, clockTick]);
 
-  const options = useMemo(
+  const lineOptions = useMemo(
     () => ({
       responsive: true,
       maintainAspectRatio: false,
@@ -386,12 +530,78 @@ const Graph = () => {
     [],
   );
 
+  const weeklyAvailability = useMemo(() => {
+    const now = resolveTimelineNow(clockTick, chartRows.history);
+    return buildWeeklyAvailabilityDataset(chartRows.history, chartRows.current, now);
+  }, [chartRows, clockTick]);
+
+  const barOptions = useMemo(
+    () => ({
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: "top",
+        },
+        title: {
+          display: true,
+          text: "Average Available Seats by Day (Last 7 Days)",
+        },
+        tooltip: {
+          callbacks: {
+            label: (context) => {
+              const value = context.parsed.y;
+              if (value == null) {
+                return "No samples yet";
+              }
+
+              return `${context.dataset.label}: ${value}/${TOTAL_LAB_SEATS}`;
+            },
+          },
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: TOTAL_LAB_SEATS,
+          ticks: {
+            precision: 0,
+          },
+          title: {
+            display: true,
+            text: "Available seats",
+          },
+        },
+        x: {
+          title: {
+            display: true,
+            text: "Day of week",
+          },
+        },
+      },
+    }),
+    [],
+  );
+
   return (
     <div className="chart-container">
-      <Line options={options} data={chartData} />
-      <p className="graph-meta">
-        Each finished hour is locked to its end-of-hour occupancy. The current hour stays live.
-      </p>
+      {chartMode === GRAPH_MODE.LINE ? (
+        <>
+          <Line options={lineOptions} data={chartData} />
+          <p className="graph-meta">
+            Each finished hour is locked to its end-of-hour occupancy. The current hour stays
+            live.
+          </p>
+        </>
+      ) : (
+        <>
+          <Bar options={barOptions} data={weeklyAvailability} />
+          <p className="graph-meta">
+            Weekly bars show historical average available seats across all configured rooms
+            (x/{TOTAL_LAB_SEATS}) using hourly snapshots.
+          </p>
+        </>
+      )}
       {lastUpdated && (
         <p className="graph-meta">
           Last updated at{" "}
@@ -403,6 +613,22 @@ const Graph = () => {
         </p>
       )}
       {error && <p className="graph-meta graph-error">{error}</p>}
+      <div className="graph-toggle-wrap" role="group" aria-label="Graph type toggle">
+        <button
+          type="button"
+          className={`graph-toggle-btn ${chartMode === GRAPH_MODE.LINE ? "active" : ""}`}
+          onClick={() => setChartMode(GRAPH_MODE.LINE)}
+        >
+          Line graph
+        </button>
+        <button
+          type="button"
+          className={`graph-toggle-btn ${chartMode === GRAPH_MODE.BAR ? "active" : ""}`}
+          onClick={() => setChartMode(GRAPH_MODE.BAR)}
+        >
+          Bar graph
+        </button>
+      </div>
     </div>
   );
 };
