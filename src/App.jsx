@@ -37,6 +37,18 @@ const CAMERA_ROOM_MAP = {
 const CAMERA_IDS = Object.keys(CAMERA_ROOM_MAP);
 const isSeatOccupied = (seatState) => seatState && seatState !== "empty";
 
+const toDisplayStationId = (cameraId, stationId) => {
+  if (!Number.isFinite(stationId)) {
+    return null;
+  }
+
+  if (cameraId === "cam-2" && stationId >= 31 && stationId <= 37) {
+    return stationId - 30;
+  }
+
+  return stationId;
+};
+
 const getInitialTheme = () => {
   if (typeof window === "undefined") {
     return "light";
@@ -85,8 +97,10 @@ export default function App() {
   }, [theme]);
 
   useEffect(() => {
-    const applyReading = (roomKey, reading) => {
-      const stationId = Number(reading?.computer_id ?? reading?.station_id);
+    const applyReading = (roomKey, cameraId, reading) => {
+      const rawStationId = Number(reading?.computer_id ?? reading?.station_id);
+      const stationId = toDisplayStationId(cameraId, rawStationId);
+
       if (!Number.isFinite(stationId)) {
         return;
       }
@@ -118,7 +132,7 @@ export default function App() {
           const readings = normalizeCurrentPayload(cameraId, payload);
 
           for (const reading of readings) {
-            applyReading(roomKey, reading);
+            applyReading(roomKey, cameraId, reading);
           }
         });
       } catch (error) {

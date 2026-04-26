@@ -27,6 +27,7 @@ ChartJS.register(
 
 // Refresh graph data every minute so the view stays near real-time.
 const INTERVAL_MS = 1 * 60 * 1000;
+const HOUR_MS = 60 * 60 * 1000;
 
 // Time windows used by the two graph modes.
 const HOURS_TO_SHOW = 24;
@@ -36,7 +37,8 @@ const WEEKLY_HOURS_TO_SHOW = DAYS_TO_SHOW * 24;
 // Shared data defaults/helpers.
 const EMPTY_STATE = "0";
 const FUTURE_SKEW_TOLERANCE_MS = 5 * 60 * 1000;
-const TOTAL_LAB_SEATS = 62;
+const WEEKLY_REAL_ROOM_SEATS = 37;
+const WEEKLY_ROOM_IDS = new Set(["cam-1", "cam-2"]);
 
 // Toggle between chart types.
 const GRAPH_MODE = {
@@ -105,29 +107,43 @@ const formatHourLabel = (timestamp) =>
     hour12: true,
   }).format(timestamp);
 
-// Build the last 24 fixed hourly buckets for the line chart.
-const buildHourBuckets = (now) => {
+// Build the line-chart buckets:
+// - previous 23 completed hours use fixed end-of-hour snapshots
+// - final bucket is the live "Now" point anchored to the real current time
+const buildLineBuckets = (now) => {
   const currentHour = startOfHour(now);
-  return Array.from({ length: HOURS_TO_SHOW }, (_, index) => {
-    const hourStart = currentHour - (HOURS_TO_SHOW - index - 1) * 60 * 60 * 1000;
+  const completedHoursToShow = HOURS_TO_SHOW - 1;
+  const completedBuckets = Array.from({ length: completedHoursToShow }, (_, index) => {
+    const hourStart = currentHour - (completedHoursToShow - index) * HOUR_MS;
 
     return {
+      type: "hour",
       hourStart,
-      hourEnd: hourStart + 60 * 60 * 1000 - 1,
+      snapshotTs: hourStart + HOUR_MS - 1,
       label: formatHourLabel(hourStart),
     };
   });
+
+  return [
+    ...completedBuckets,
+    {
+      type: "live",
+      hourStart: currentHour,
+      snapshotTs: now,
+      label: "Now",
+    },
+  ];
 };
 
 // Build a rolling N-hour bucket list (used by weekly summary calculations).
 const buildRollingHourBuckets = (now, totalHours) => {
   const currentHour = startOfHour(now);
   return Array.from({ length: totalHours }, (_, index) => {
-    const hourStart = currentHour - (totalHours - index - 1) * 60 * 60 * 1000;
+    const hourStart = currentHour - (totalHours - index - 1) * HOUR_MS;
 
     return {
       hourStart,
-      hourEnd: hourStart + 60 * 60 * 1000 - 1,
+      hourEnd: hourStart + HOUR_MS - 1,
     };
   });
 };
@@ -272,7 +288,7 @@ const resolveStationStateAtTimestamp = (
 // - each point = occupied seat count at each hourly bucket
 // - final hour can use current live state for fresher data
 const buildHourlyDatasets = (historyRows, currentRows, now) => {
-  const hours = buildHourBuckets(now);
+  const buckets = buildLineBuckets(now);
   const stationHistoryMap = buildStationHistoryMap(historyRows, currentRows);
   const currentStateMap = buildCurrentStateMap(currentRows);
 
@@ -281,7 +297,7 @@ const buildHourlyDatasets = (historyRows, currentRows, now) => {
       key.startsWith(`${room.cameraId}:`),
     );
 
-    const data = hours.map(({ hourEnd }, index) => {
+    const data = buckets.map(({ snapshotTs, type }) => {
       let occupiedCount = 0;
       let sampledStations = 0;
 
@@ -289,12 +305,12 @@ const buildHourlyDatasets = (historyRows, currentRows, now) => {
         const events = stationHistoryMap.get(stationKey) ?? [];
         const currentState = currentStateMap.get(stationKey);
         const stationState =
-          index === hours.length - 1
+          type === "live"
             ? currentState ??
               resolveStationStateAtTimestamp(events, currentState, now, {
                 allowCurrentFallback: true,
               })
-            : resolveStationStateAtTimestamp(events, currentState, hourEnd);
+            : resolveStationStateAtTimestamp(events, currentState, snapshotTs);
 
         if (stationState == null) {
           continue;
@@ -327,15 +343,11 @@ const buildHourlyDatasets = (historyRows, currentRows, now) => {
   });
 };
 
-// Keep only stations belonging to rooms configured for display.
-const buildRoomStationKeys = (stationHistoryMap) => {
-  const allowedRooms = new Set(ROOM_CONFIG.map((room) => room.cameraId));
-
-  return Array.from(stationHistoryMap.keys()).filter((key) => {
+const buildFilteredRoomStationKeys = (stationHistoryMap, allowedRoomIds) =>
+  Array.from(stationHistoryMap.keys()).filter((key) => {
     const [cameraId] = key.split(":");
-    return allowedRooms.has(cameraId);
+    return allowedRoomIds.has(cameraId);
   });
-};
 
 // Count occupied stations across a station list at a single timestamp.
 const resolveOccupiedCountAtTimestamp = (
@@ -374,12 +386,12 @@ const buildWeeklyAvailabilityDataset = (
   historyRows,
   currentRows,
   now,
-  totalSeats = TOTAL_LAB_SEATS,
+  totalSeats = WEEKLY_REAL_ROOM_SEATS,
 ) => {
   const hourBuckets = buildRollingHourBuckets(now, WEEKLY_HOURS_TO_SHOW);
   const stationHistoryMap = buildStationHistoryMap(historyRows, currentRows);
   const currentStateMap = buildCurrentStateMap(currentRows);
-  const stationKeys = buildRoomStationKeys(stationHistoryMap);
+  const stationKeys = buildFilteredRoomStationKeys(stationHistoryMap, WEEKLY_ROOM_IDS);
   const weekdayTotals = WEEKDAY_LABELS.map(() => ({ availableSum: 0, samples: 0 }));
 
   hourBuckets.forEach(({ hourStart, hourEnd }, index) => {
@@ -464,9 +476,9 @@ const Graph = () => {
     const loadGraphData = async () => {
       try {
         const now = Date.now();
-        // Keep at least a full 24-hour timeline in memory.
+        // Keep enough history for the full weekly bar chart.
         const historySinceTs =
-          startOfHour(now) - (HOURS_TO_SHOW - 1) * 60 * 60 * 1000;
+          startOfHour(now) - (WEEKLY_HOURS_TO_SHOW - 1) * HOUR_MS;
 
         // Delta fetch: request only rows newer than our cached latest row.
         const latestTs = globalHistoryCache.length > 0
@@ -549,10 +561,10 @@ const Graph = () => {
   // Data for the 24-hour line chart.
   const chartData = useMemo(() => {
     const now = resolveTimelineNow(clockTick, chartRows.history);
-    const hours = buildHourBuckets(now);
+    const buckets = buildLineBuckets(now);
 
     return {
-      labels: hours.map((hour) => hour.label),
+      labels: buckets.map((bucket) => bucket.label),
       datasets: buildHourlyDatasets(chartRows.history, chartRows.current, now),
     };
   }, [chartRows, clockTick]);
@@ -576,6 +588,19 @@ const Graph = () => {
         },
         tooltip: {
           callbacks: {
+            title: (items) => {
+              const label = items?.[0]?.label;
+
+              if (label === "Now") {
+                return `Now (${new Intl.DateTimeFormat("en-US", {
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
+                }).format(resolveTimelineNow(clockTick, chartRows.history))})`;
+              }
+
+              return label ?? "";
+            },
             label: (context) => {
               const value = context.parsed.y;
               if (value == null) {
@@ -601,12 +626,12 @@ const Graph = () => {
         x: {
           title: {
             display: true,
-            text: "Last 24 hours",
+            text: "Previous 23 hours + live now",
           },
         },
       },
     }),
-    [],
+    [chartRows.history, clockTick],
   );
 
   // Data for weekly "average available seats by weekday" bars.
@@ -636,7 +661,7 @@ const Graph = () => {
                 return "No samples yet";
               }
 
-              return `${context.dataset.label}: ${value}/${TOTAL_LAB_SEATS}`;
+              return `${context.dataset.label}: ${value}/${WEEKLY_REAL_ROOM_SEATS}`;
             },
           },
         },
@@ -644,7 +669,7 @@ const Graph = () => {
       scales: {
         y: {
           beginAtZero: true,
-          max: TOTAL_LAB_SEATS,
+          max: WEEKLY_REAL_ROOM_SEATS,
           ticks: {
             precision: 0,
           },
@@ -680,7 +705,7 @@ const Graph = () => {
           <Bar options={barOptions} data={weeklyAvailability} />
           <p className="graph-meta">
             Weekly bars show historical average available seats across all configured rooms
-            (x/{TOTAL_LAB_SEATS}) using hourly snapshots.
+            except the dummy room 2039 (x/{WEEKLY_REAL_ROOM_SEATS}) using hourly snapshots.
           </p>
         </>
       )}

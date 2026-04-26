@@ -18,6 +18,12 @@ const resolveCameraFromComputerId = (computerId, fallback = "cam-1") => {
     return normalizedFallback;
   }
 
+  // For cam-2, the camera can legitimately send local seat ids 1-7.
+  // In that case, trust the requested camera instead of inferring cam-1.
+  if (normalizedFallback === "cam-2" && id >= 1 && id <= 7) {
+    return "cam-2";
+  }
+
   if (id >= CAMERA_CONFIG["cam-2"].minComputerId && id <= CAMERA_CONFIG["cam-2"].maxComputerId) {
     return "cam-2";
   }
