@@ -47,6 +47,8 @@ const ROOM_CONFIG = [
   },
 ];
 
+let globalHistoryCache = [];
+
 const toMs = (value) => {
   const timestamp = Number(value);
   return Number.isFinite(timestamp) ? timestamp : null;
@@ -271,8 +273,18 @@ const Graph = () => {
     const loadGraphData = async () => {
       try {
         const now = Date.now();
+<<<<<<< Updated upstream
         const [historyPayload, ...currentPayloads] = await Promise.all([
           fetchData({ sinceTs: startOfHour(now) - (HOURS_TO_SHOW - 1) * 60 * 60 * 1000 }),
+=======
+        const sevenDaysAgo =
+          startOfHour(now) - (WEEKLY_HOURS_TO_SHOW - 1) * 60 * 60 * 1000;
+
+        const latestTs = getLatestHistoryTimestamp(globalHistoryCache);
+        const fetchSinceTs = latestTs ? latestTs + 1 : sevenDaysAgo;
+        const [historyPayload, ...currentPayloads] = await Promise.all([
+          fetchData({ sinceTs: fetchSinceTs }),
+>>>>>>> Stashed changes
           ...ROOM_CONFIG.map((room) =>
             fetchCurrentOccupancy(room.cameraId).catch((fetchError) => {
               if (fetchError?.message?.includes("404")) {
@@ -288,12 +300,25 @@ const Graph = () => {
           return;
         }
 
-        const history = normalizeHistory(historyPayload);
+        const newHistory = normalizeHistory(historyPayload);
         const current = currentPayloads.flatMap((payload, index) =>
           normalizeCurrent(payload, ROOM_CONFIG[index].cameraId),
         );
 
-        setChartRows({ history, current });
+        // Deduplicate incoming history against our cache (to handle seed overlap)
+        const existingKeys = new Set(
+          globalHistoryCache.map((row) => `${row.cameraId}:${row.stationId}:${row.ts}`)
+        );
+        const uniqueNewHistory = newHistory.filter(
+          (row) => !existingKeys.has(`${row.cameraId}:${row.stationId}:${row.ts}`)
+        );
+
+        // Merge the delta and prune events older than 7 days to prevent memory leaks
+        let mergedHistory = [...globalHistoryCache, ...uniqueNewHistory];
+        mergedHistory = mergedHistory.filter((row) => row.ts >= sevenDaysAgo);
+        globalHistoryCache = mergedHistory;
+
+        setChartRows({ history: mergedHistory, current });
         setLastUpdated(now);
         setError("");
       } catch (fetchError) {
