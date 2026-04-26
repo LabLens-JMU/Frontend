@@ -80,7 +80,7 @@ const Seating2020 = ({ seatStates = {} }) => {
             </section>
 
             <section className="col">
-              {[13, 19, 26].map((startSeat) =>
+              {[13, 19, 25].map((startSeat) =>
                 renderSeatRow6(startSeat, seatStates),
               )}
             </section>

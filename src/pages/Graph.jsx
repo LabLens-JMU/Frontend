@@ -25,7 +25,9 @@ ChartJS.register(
   Legend,
 );
 
-const FIVE_MINUTES_MS = 5 * 60 * 1000;
+// Update interval.
+const INTERVAL_MS = 1 * 60 * 1000;
+
 const HOURS_TO_SHOW = 24;
 const DAYS_TO_SHOW = 7;
 const WEEKLY_HOURS_TO_SHOW = DAYS_TO_SHOW * 24;
@@ -451,7 +453,7 @@ const Graph = () => {
     };
 
     loadGraphData();
-    const timer = setInterval(loadGraphData, FIVE_MINUTES_MS);
+    const timer = setInterval(loadGraphData, INTERVAL_MS);
 
     return () => {
       cancelled = true;

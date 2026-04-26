@@ -1,11 +1,91 @@
 const pool = require("../db");
 
+const CAMERA_CONFIG = {
+  "cam-1": { minComputerId: 1, maxComputerId: 30, offset: 0 },
+  "cam-2": { minComputerId: 31, maxComputerId: 37, offset: 30 },
+};
+
+const toNumberOrNull = (value) => {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : null;
+};
+
+const resolveCameraFromComputerId = (computerId, fallback = "cam-1") => {
+  const normalizedFallback = normalizeCameraId(fallback);
+  const id = toNumberOrNull(computerId);
+
+  if (id == null) {
+    return normalizedFallback;
+  }
+
+  if (id >= CAMERA_CONFIG["cam-2"].minComputerId && id <= CAMERA_CONFIG["cam-2"].maxComputerId) {
+    return "cam-2";
+  }
+
+  if (id >= CAMERA_CONFIG["cam-1"].minComputerId && id <= CAMERA_CONFIG["cam-1"].maxComputerId) {
+    return "cam-1";
+  }
+
+  return normalizedFallback;
+};
+
+const toCanonicalComputerId = (cameraId, computerId) => {
+  const normalizedCameraId = normalizeCameraId(cameraId);
+  const id = toNumberOrNull(computerId);
+
+  if (id == null) {
+    return null;
+  }
+
+  // Allow cam-2 payloads to send local seat IDs 1-7 and store canonical 31-37.
+  if (normalizedCameraId === "cam-2" && id >= 1 && id <= 7) {
+    return id + CAMERA_CONFIG["cam-2"].offset;
+  }
+
+  return id;
+};
+
+const toDisplayComputerId = (cameraId, computerId) => {
+  const normalizedCameraId = normalizeCameraId(cameraId);
+  const id = toNumberOrNull(computerId);
+
+  if (id == null) {
+    return null;
+  }
+
+  if (
+    normalizedCameraId === "cam-2" &&
+    id >= CAMERA_CONFIG["cam-2"].minComputerId &&
+    id <= CAMERA_CONFIG["cam-2"].maxComputerId
+  ) {
+    return id - CAMERA_CONFIG["cam-2"].offset;
+  }
+
+  return id;
+};
+
+const formatRowForClient = (row) => {
+  const cameraId = normalizeCameraId(row.camera_id);
+  const rawComputerId = toNumberOrNull(row.computer_id);
+  const displayComputerId = toDisplayComputerId(cameraId, rawComputerId);
+
+  return {
+    ...row,
+    camera_id: cameraId,
+    computer_id: displayComputerId,
+    source_computer_id: rawComputerId,
+  };
+};
+
 const normalizePayload = (body = {}) => {
-  const computerId = body.computer_id ?? body.computer_id;
+  const rawComputerId = body.computer_id;
+  const requestedCameraId = body.camera_id ?? "cam-1";
+  const cameraId = resolveCameraFromComputerId(rawComputerId, requestedCameraId);
+  const computerId = toCanonicalComputerId(cameraId, rawComputerId);
   const timestamp = body.ts_ms ?? Date.now();
 
   return {
-    camera_id: body.camera_id ?? "cam-1",
+    camera_id: cameraId,
     computer_id: computerId,
     ts_ms: timestamp,
     occupied: body.occupied,
@@ -22,6 +102,10 @@ exports.receiveData = async (req, res) => {
     const { camera_id, computer_id, ts_ms, occupied, confidence } =
       normalizePayload(req.body);
 
+    if (computer_id == null) {
+      return res.status(400).json({ error: "computer_id is required" });
+    }
+
     const [insertResult] = await pool.query(
       `INSERT INTO occupancy 
             (camera_id, computer_id, ts_ms, occupied, confidence)
@@ -32,7 +116,8 @@ exports.receiveData = async (req, res) => {
     const newData = {
       insert_id: insertResult.insertId ?? null,
       camera_id: normalizeCameraId(camera_id),
-      computer_id,
+      computer_id: toDisplayComputerId(camera_id, computer_id),
+      source_computer_id: computer_id,
       ts_ms,
       occupied,
       confidence,
@@ -49,10 +134,14 @@ exports.receiveData = async (req, res) => {
 exports.receiveMockData = async (req, res) => {
   try {
     const payload = normalizePayload(req.body);
+    const displayComputerId = toDisplayComputerId(payload.camera_id, payload.computer_id);
+
     res.json({
       source: "mock",
       ...payload,
       camera_id: normalizeCameraId(payload.camera_id),
+      computer_id: displayComputerId,
+      source_computer_id: payload.computer_id,
     });
   } catch (err) {
     console.error(err);
@@ -96,7 +185,7 @@ exports.getData = async (req, res) => {
       rows = recentRows;
     }
 
-    res.json(rows);
+    res.json(rows.map(formatRowForClient));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
@@ -127,7 +216,7 @@ exports.getCurrentData = async (req, res) => {
       return res.status(404).json({ error: "No occupancy data found for camera" });
     }
 
-    return res.json(rows);
+    return res.json(rows.map(formatRowForClient));
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Server error" });

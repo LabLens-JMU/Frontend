@@ -5,7 +5,7 @@ const campusData = [
     id: "b1",
     name: "Engeo",
     rooms: [
-      { id: "r2020", name: "2020", room_total: 31 },
+      { id: "r2020", name: "2020", room_total: 30 },
       { id: "r2037", name: "2037", room_total: 7 },
       { id: "r2039", name: "2039", room_total: 24 },
     ],
