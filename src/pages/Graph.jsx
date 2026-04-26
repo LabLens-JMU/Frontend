@@ -273,18 +273,16 @@ const Graph = () => {
     const loadGraphData = async () => {
       try {
         const now = Date.now();
-<<<<<<< Updated upstream
-        const [historyPayload, ...currentPayloads] = await Promise.all([
-          fetchData({ sinceTs: startOfHour(now) - (HOURS_TO_SHOW - 1) * 60 * 60 * 1000 }),
-=======
-        const sevenDaysAgo =
-          startOfHour(now) - (WEEKLY_HOURS_TO_SHOW - 1) * 60 * 60 * 1000;
+        const historySinceTs =
+          startOfHour(now) - (HOURS_TO_SHOW - 1) * 60 * 60 * 1000;
 
-        const latestTs = getLatestHistoryTimestamp(globalHistoryCache);
-        const fetchSinceTs = latestTs ? latestTs + 1 : sevenDaysAgo;
+        const latestTs = globalHistoryCache.length > 0
+          ? Math.max(...globalHistoryCache.map((row) => row.ts))
+          : null;
+        const fetchSinceTs = latestTs ? latestTs + 1 : historySinceTs;
+
         const [historyPayload, ...currentPayloads] = await Promise.all([
           fetchData({ sinceTs: fetchSinceTs }),
->>>>>>> Stashed changes
           ...ROOM_CONFIG.map((room) =>
             fetchCurrentOccupancy(room.cameraId).catch((fetchError) => {
               if (fetchError?.message?.includes("404")) {
@@ -315,7 +313,7 @@ const Graph = () => {
 
         // Merge the delta and prune events older than 7 days to prevent memory leaks
         let mergedHistory = [...globalHistoryCache, ...uniqueNewHistory];
-        mergedHistory = mergedHistory.filter((row) => row.ts >= sevenDaysAgo);
+        mergedHistory = mergedHistory.filter((row) => row.ts >= historySinceTs);
         globalHistoryCache = mergedHistory;
 
         setChartRows({ history: mergedHistory, current });
