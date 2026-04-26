@@ -25,20 +25,29 @@ ChartJS.register(
   Legend,
 );
 
-// Update interval.
+// Refresh graph data every minute so the view stays near real-time.
 const INTERVAL_MS = 1 * 60 * 1000;
 
+// Time windows used by the two graph modes.
 const HOURS_TO_SHOW = 24;
 const DAYS_TO_SHOW = 7;
 const WEEKLY_HOURS_TO_SHOW = DAYS_TO_SHOW * 24;
+
+// Shared data defaults/helpers.
 const EMPTY_STATE = "0";
 const FUTURE_SKEW_TOLERANCE_MS = 5 * 60 * 1000;
 const TOTAL_LAB_SEATS = 62;
+
+// Toggle between chart types.
 const GRAPH_MODE = {
   LINE: "line",
   BAR: "bar",
 };
+
+// X-axis labels for weekly summary bars.
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+// Display config for each room/camera shown in the charts.
 const ROOM_CONFIG = [
   {
     cameraId: "cam-1",
@@ -60,34 +69,43 @@ const ROOM_CONFIG = [
   },
 ];
 
+// In-memory cache of normalized history rows.
+// This persists across re-renders and lets us fetch only deltas.
 let globalHistoryCache = [];
 
+// Convert incoming values to a numeric timestamp in ms, or null if invalid.
 const toMs = (value) => {
   const timestamp = Number(value);
   return Number.isFinite(timestamp) ? timestamp : null;
 };
 
+// Resolve station/computer id from whichever field the API returns.
 const toStationId = (reading) => {
   const stationId = Number(reading?.computer_id ?? reading?.station_id);
   return Number.isFinite(stationId) ? stationId : null;
 };
 
+// Normalize occupancy to string values for consistent comparisons.
 const toOccupancyState = (value) => String(value ?? EMPTY_STATE);
 
+// Occupied means anything other than our empty-state marker ("0").
 const isOccupied = (value) => toOccupancyState(value) !== EMPTY_STATE;
 
+// Snap any timestamp to the start of that hour.
 const startOfHour = (timestamp) => {
   const date = new Date(timestamp);
   date.setMinutes(0, 0, 0);
   return date.getTime();
 };
 
+// User-facing hour label formatter (e.g., "2 PM").
 const formatHourLabel = (timestamp) =>
   new Intl.DateTimeFormat("en-US", {
     hour: "numeric",
     hour12: true,
   }).format(timestamp);
 
+// Build the last 24 fixed hourly buckets for the line chart.
 const buildHourBuckets = (now) => {
   const currentHour = startOfHour(now);
   return Array.from({ length: HOURS_TO_SHOW }, (_, index) => {
@@ -101,6 +119,7 @@ const buildHourBuckets = (now) => {
   });
 };
 
+// Build a rolling N-hour bucket list (used by weekly summary calculations).
 const buildRollingHourBuckets = (now, totalHours) => {
   const currentHour = startOfHour(now);
   return Array.from({ length: totalHours }, (_, index) => {
@@ -113,6 +132,7 @@ const buildRollingHourBuckets = (now, totalHours) => {
   });
 };
 
+// History API can return either an array or { events: [...] }.
 const getHistoryRows = (payload) => {
   if (Array.isArray(payload)) {
     return payload;
@@ -125,6 +145,7 @@ const getHistoryRows = (payload) => {
   return [];
 };
 
+// Convert raw history payload into clean, chart-ready rows.
 const normalizeHistory = (payload) => {
   return getHistoryRows(payload)
     .map((reading) => {
@@ -146,6 +167,8 @@ const normalizeHistory = (payload) => {
     .filter(Boolean);
 };
 
+// Normalize current occupancy payloads into a single shared row shape.
+// Supports payload array, { computers: [...] }, or single-object responses.
 const normalizeCurrent = (payload, fallbackCameraId) => {
   if (!payload) {
     return [];
@@ -180,6 +203,7 @@ const normalizeCurrent = (payload, fallbackCameraId) => {
     .filter(Boolean);
 };
 
+// Build map: "cameraId:stationId" => sorted event timeline for that station.
 const buildStationHistoryMap = (historyRows, currentRows) => {
   const byStation = new Map();
 
@@ -204,6 +228,7 @@ const buildStationHistoryMap = (historyRows, currentRows) => {
   return byStation;
 };
 
+// Build map: "cameraId:stationId" => latest known current state.
 const buildCurrentStateMap = (currentRows) => {
   const state = new Map();
 
@@ -214,6 +239,10 @@ const buildCurrentStateMap = (currentRows) => {
   return state;
 };
 
+// Resolve a station's occupancy at a target timestamp.
+// Detailed behavior:
+// 1) Prefer the latest historical event at/before that timestamp.
+// 2) If none exists, optionally fall back to current state (for "live" buckets).
 const resolveStationStateAtTimestamp = (
   events = [],
   currentState,
@@ -238,6 +267,10 @@ const resolveStationStateAtTimestamp = (
   return allowCurrentFallback ? currentState ?? null : null;
 };
 
+// Build line-chart datasets:
+// - one series per configured room
+// - each point = occupied seat count at each hourly bucket
+// - final hour can use current live state for fresher data
 const buildHourlyDatasets = (historyRows, currentRows, now) => {
   const hours = buildHourBuckets(now);
   const stationHistoryMap = buildStationHistoryMap(historyRows, currentRows);
@@ -294,6 +327,7 @@ const buildHourlyDatasets = (historyRows, currentRows, now) => {
   });
 };
 
+// Keep only stations belonging to rooms configured for display.
 const buildRoomStationKeys = (stationHistoryMap) => {
   const allowedRooms = new Set(ROOM_CONFIG.map((room) => room.cameraId));
 
@@ -303,6 +337,7 @@ const buildRoomStationKeys = (stationHistoryMap) => {
   });
 };
 
+// Count occupied stations across a station list at a single timestamp.
 const resolveOccupiedCountAtTimestamp = (
   stationKeys,
   stationHistoryMap,
@@ -333,6 +368,8 @@ const resolveOccupiedCountAtTimestamp = (
   return { occupiedCount, sampledStations };
 };
 
+// Build bar-chart data: average available seats per weekday over last 7 days.
+// For each hourly snapshot, available = total seats - occupied seats.
 const buildWeeklyAvailabilityDataset = (
   historyRows,
   currentRows,
@@ -380,6 +417,7 @@ const buildWeeklyAvailabilityDataset = (
   };
 };
 
+// Find most recent timestamp in normalized history.
 const getLatestHistoryTimestamp = (historyRows) => {
   if (!Array.isArray(historyRows) || historyRows.length === 0) {
     return null;
@@ -388,6 +426,9 @@ const getLatestHistoryTimestamp = (historyRows) => {
   return historyRows.reduce((latest, row) => Math.max(latest, row.ts ?? 0), 0);
 };
 
+// Choose timeline "now" for charting.
+// If source data is meaningfully ahead of client clock, anchor to source time
+// so recent points still render in the expected hourly buckets.
 const resolveTimelineNow = (clockNow, historyRows) => {
   const latestHistoryTs = getLatestHistoryTimestamp(historyRows);
 
@@ -405,26 +446,35 @@ const resolveTimelineNow = (clockNow, historyRows) => {
 };
 
 const Graph = () => {
+  // `history`: normalized event timeline, `current`: latest occupancy states.
   const [chartRows, setChartRows] = useState({ history: [], current: [] });
+  // UI status/meta state.
   const [lastUpdated, setLastUpdated] = useState(null);
   const [error, setError] = useState("");
+  // Drives periodic recomputation even when no fetch has occurred yet.
   const [clockTick, setClockTick] = useState(Date.now());
+  // Line (24h trend) vs bar (7-day weekday averages).
   const [chartMode, setChartMode] = useState(GRAPH_MODE.LINE);
 
   useEffect(() => {
+    // Guard against state updates after unmount.
     let cancelled = false;
 
+    // Pull incremental history + current snapshots, then merge into cache/state.
     const loadGraphData = async () => {
       try {
         const now = Date.now();
+        // Keep at least a full 24-hour timeline in memory.
         const historySinceTs =
           startOfHour(now) - (HOURS_TO_SHOW - 1) * 60 * 60 * 1000;
 
+        // Delta fetch: request only rows newer than our cached latest row.
         const latestTs = globalHistoryCache.length > 0
           ? Math.max(...globalHistoryCache.map((row) => row.ts))
           : null;
         const fetchSinceTs = latestTs ? latestTs + 1 : historySinceTs;
 
+        // Load history once plus current occupancy for each room in parallel.
         const [historyPayload, ...currentPayloads] = await Promise.all([
           fetchData({ sinceTs: fetchSinceTs }),
           ...ROOM_CONFIG.map((room) =>
@@ -447,7 +497,7 @@ const Graph = () => {
           normalizeCurrent(payload, ROOM_CONFIG[index].cameraId),
         );
 
-        // Deduplicate incoming history against our cache (to handle seed overlap)
+        // Deduplicate incoming history against our cache (handles overlap from APIs).
         const existingKeys = new Set(
           globalHistoryCache.map((row) => `${row.cameraId}:${row.stationId}:${row.ts}`)
         );
@@ -455,7 +505,7 @@ const Graph = () => {
           (row) => !existingKeys.has(`${row.cameraId}:${row.stationId}:${row.ts}`)
         );
 
-        // Merge the delta and prune events older than 7 days to prevent memory leaks
+        // Merge and prune old rows so memory use stays bounded.
         let mergedHistory = [...globalHistoryCache, ...uniqueNewHistory];
         mergedHistory = mergedHistory.filter((row) => row.ts >= historySinceTs);
         globalHistoryCache = mergedHistory;
@@ -473,9 +523,11 @@ const Graph = () => {
       }
     };
 
+    // Initial load + periodic refresh.
     loadGraphData();
     const timer = setInterval(loadGraphData, INTERVAL_MS);
 
+    // Cleanup timer and prevent post-unmount setState.
     return () => {
       cancelled = true;
       clearInterval(timer);
@@ -483,15 +535,18 @@ const Graph = () => {
   }, []);
 
   useEffect(() => {
+    // Advance timeline every minute so labels/current bucket stay fresh.
     const timer = setInterval(() => {
       setClockTick(Date.now());
     }, 60 * 1000);
 
+    // Cleanup minute ticker.
     return () => {
       clearInterval(timer);
     };
   }, []);
 
+  // Data for the 24-hour line chart.
   const chartData = useMemo(() => {
     const now = resolveTimelineNow(clockTick, chartRows.history);
     const hours = buildHourBuckets(now);
@@ -502,6 +557,7 @@ const Graph = () => {
     };
   }, [chartRows, clockTick]);
 
+  // Line chart display/interaction config.
   const lineOptions = useMemo(
     () => ({
       responsive: true,
@@ -553,11 +609,13 @@ const Graph = () => {
     [],
   );
 
+  // Data for weekly "average available seats by weekday" bars.
   const weeklyAvailability = useMemo(() => {
     const now = resolveTimelineNow(clockTick, chartRows.history);
     return buildWeeklyAvailabilityDataset(chartRows.history, chartRows.current, now);
   }, [chartRows, clockTick]);
 
+  // Bar chart display/interaction config.
   const barOptions = useMemo(
     () => ({
       responsive: true,
@@ -608,6 +666,7 @@ const Graph = () => {
 
   return (
     <div className="chart-container">
+      {/* Toggle between the live 24-hour trend and weekly availability summary. */}
       {chartMode === GRAPH_MODE.LINE ? (
         <>
           <Line options={lineOptions} data={chartData} />
@@ -636,6 +695,7 @@ const Graph = () => {
         </p>
       )}
       {error && <p className="graph-meta graph-error">{error}</p>}
+      {/* Simple mode switch buttons for line/bar visualizations. */}
       <div className="graph-toggle-wrap" role="group" aria-label="Graph type toggle">
         <button
           type="button"
