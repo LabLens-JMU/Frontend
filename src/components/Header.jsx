@@ -23,38 +23,35 @@ const Header = ({ onShowGraph, theme, onToggleTheme }) => {
         <img
           className="logo"
           src={logo}
-          width="100"
           alt="Logo"
         />
       </button>
-        <h1 className="title">LabLens</h1>
-        <nav>
-          <ul className="list-icons">
-            <li className="graph">
-              <img
-                className="graph"
-                onClick={onShowGraph}
-                src={graph}
-                width="75"
-                alt="graph"
-              />
-            </li>
-            <li className="theme-toggle">
-              <button
-                type="button"
-                className="theme-toggle-button header-icon-button settings-button"
-                onClick={onToggleTheme}
-                aria-label={themeAlt}
-                title={themeAlt}
-              >
-                <img src={themeIcon} width="75" alt={themeAlt} />
-              </button>
-              {/* <a href="https://www.flaticon.com/free-icons/sun" title="sun icons">Sun icons created by bqlqn - Flaticon</a> */}
-              {/* <a href="https://www.flaticon.com/free-icons/moon" title="moon icons">Moon icons created by Good Ware - Flaticon</a> */}
-            </li>
-          </ul>
-        </nav>
-      </header>
+      <h1 className="title">LabLens</h1>
+      <nav className="header-actions" aria-label="Header actions">
+        <button
+          type="button"
+          className="header-icon-button graph-button"
+          onClick={onShowGraph}
+          aria-label="Show graph"
+          title="Show graph"
+        >
+          <img
+            className="graph"
+            src={graph}
+            alt="Show graph"
+          />
+        </button>
+        <button
+          type="button"
+          className="theme-toggle-button header-icon-button settings-button"
+          onClick={onToggleTheme}
+          aria-label={themeAlt}
+          title={themeAlt}
+        >
+          <img className="settings-icon" src={themeIcon} alt={themeAlt} />
+        </button>
+      </nav>
+    </header>
   );
 };
 

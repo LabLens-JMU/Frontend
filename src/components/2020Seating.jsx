@@ -53,7 +53,7 @@ const renderSeatRow6 = (startSeat, seatStates) => (
 const Seating2020 = ({ seatStates = {} }) => {
   return (
       <>
-        <div className="roomContainer">
+        <div className="roomContainer room-2020">
           <section className="front-row">
             <div className="block hor-board">
               <p>Board</p>
@@ -66,7 +66,7 @@ const Seating2020 = ({ seatStates = {} }) => {
             </div>
           </section>
 
-          <section className="room-body">
+          <section className="room-body room-body-2020">
             <aside className="left-wall">
               <div className="block vert-board">
                 <p>Board</p>

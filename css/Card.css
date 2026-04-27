@@ -18,7 +18,7 @@
   font-family: sans-serif;
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  height: 10vh;
+  min-height: 9rem;
   text-align: left;
 }
 
@@ -69,6 +69,7 @@
 
   .hero-card {
     padding: 20px;
+    min-height: 8.5rem;
   }
 }
 
@@ -79,5 +80,6 @@
 
   .hero-card {
     padding: 18px;
+    min-height: 8rem;
   }
 }

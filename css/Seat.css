@@ -168,6 +168,26 @@ p {
   margin: 0;
 }
 
+@media (max-width: 1440px) {
+  .room-2020 {
+    font-size: 0.9rem;
+    padding: 16px;
+  }
+
+  .room-2020 .front-row,
+  .room-2020 .boards,
+  .room-2020 .room-body-2020,
+  .room-2020 .left-wall,
+  .room-2020 .right-wall,
+  .room-2020 .seat-columns {
+    gap: 0.75rem;
+  }
+
+  .room-2020 .room-seats {
+    margin: 14px;
+  }
+}
+
 @media (max-width: 720px) {
   .roomContainer {
     border: none;
