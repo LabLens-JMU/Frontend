@@ -11,17 +11,22 @@ const Header = ({ onShowGraph, theme, onToggleTheme }) => {
   const themeAlt = isDarkTheme ? "Switch to light mode" : "Switch to dark mode";
 
   return (
-    <>
-      <header>
+    <header className="app-header">
+      <button
+        type="button"
+        className="header-logo-button"
+        onClick={() => {
+          window.location.reload();
+        }}
+        aria-label="Reload page"
+      >
         <img
           className="logo"
-          onClick={() => {
-            window.location.reload();
-          }}
           src={logo}
           width="100"
           alt="Logo"
         />
+      </button>
         <h1 className="title">LabLens</h1>
         <nav>
           <ul className="list-icons">
@@ -37,7 +42,7 @@ const Header = ({ onShowGraph, theme, onToggleTheme }) => {
             <li className="theme-toggle">
               <button
                 type="button"
-                className="theme-toggle-button"
+                className="theme-toggle-button header-icon-button settings-button"
                 onClick={onToggleTheme}
                 aria-label={themeAlt}
                 title={themeAlt}
@@ -50,7 +55,6 @@ const Header = ({ onShowGraph, theme, onToggleTheme }) => {
           </ul>
         </nav>
       </header>
-    </>
   );
 };
 

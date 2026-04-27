@@ -9,6 +9,22 @@
   gap: 1.5rem;
 }
 
+.room-scroll-shell {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.5rem;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+.room-scroll-shell > * {
+  flex: 0 0 auto;
+}
+
 .back-button {
   align-self: flex-start;
   padding: 0.5rem 1rem;

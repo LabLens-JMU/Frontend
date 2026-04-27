@@ -146,4 +146,21 @@ body {
   display: flex;
   flex: 1;
   min-width: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 1080px) {
+  .center {
+    flex-direction: column;
+  }
+
+  .left,
+  .screen,
+  .aside-left {
+    width: 100%;
+  }
+
+  .screen {
+    min-height: 0;
+  }
 }
