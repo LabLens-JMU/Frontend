@@ -82,12 +82,12 @@
 
 .breadcrumb-item {
   cursor: pointer;
-  color: var(--jmuPurple);
+  color: var(--text-default);
   transition: color 0.2s ease;
 }
 
 .breadcrumb-item:hover {
-  color: var(--lightPurple);
+  color: var(--mediumPurple);
   text-decoration: underline;
 }
 

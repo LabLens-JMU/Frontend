@@ -10,11 +10,11 @@
 }
 
 .hero-card {
-  background-color: var(--lightGray);
+  background-color: var(--card-bg);
   border: none;
   border-radius: 12px;
   padding: 24px;
-  width: 450px;
+  width: 350px;
   font-family: sans-serif;
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -24,7 +24,7 @@
 
 .hero-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px var(--jmuGold);
+  box-shadow: 0 10px 20px var(--card-hover-border);
   cursor: pointer;
 }
 
@@ -36,8 +36,8 @@
 }
 
 .description {
-  color: var(--jmuGold);
-  font-size: 0.75rem;
+  color: var(--card-description);
+  font-size: 0.85rem;
   line-height: 1.5;
   margin-bottom: 20px;
 }

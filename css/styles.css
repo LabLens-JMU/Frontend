@@ -6,9 +6,11 @@
   --slateGray: #333333;
   --darkGray: #595959;
   --darkBlue: #3c738b;
+  --lightGray: #888888;
   --mediumGreen: #adcc23;
   --mediumBlue: #5498b6;
   --jmuRed: #a4232b;
+  --lightBlue: #42d7f5;
   /* Status colors */
   --isFull: rgb(225, 0, 0);
   --isIdle: rgb(216, 202, 2);
@@ -26,14 +28,14 @@
   --border-default: #e0e0e0;
   --text-default: var(--slateGray);
   --text-muted: #888888;
-  --interactive-text: var(--darkBlue);
-  --interactive-text-hover: var(--mediumBlue);
+  --interactive-text: var(--jmuPurple);
+  --interactive-text-hover: var(--mediumPurple);
   --interactive-hover-bg: #f0f4ff;
   --interactive-active-bg: #e6ecff;
-  --card-bg: var(--darkGray);
+  --card-bg: var(--lightGray);
   --card-title: #ffffff;
-  --card-description: var(--jmuGold);
-  --card-hover-border: var(--jmuGold);
+  --card-description: var(--jmuPurple);
+  --card-hover-border: var(--jmuPurple);
   --card-hover-shadow: rgba(203, 182, 119, 0.2);
   --status-badge-bg: #333333;
   --button-outline: var(--jmuGold);
@@ -46,6 +48,7 @@
   --door-text: #ffffff;
   --seat-border: #000000;
   --landing-overlay: rgba(69, 0, 132, 0.35);
+  --breadcrum-item: var(--jmuPurple);
 }
 
 :root[data-theme="dark"] {
@@ -64,7 +67,7 @@
   --interactive-text-hover: #d8c48b;
   --interactive-hover-bg: #3a2b53;
   --interactive-active-bg: #4a3967;
-  --card-bg: #2a1d3c;
+  --card-bg: var(--darkGray);
   --card-title: #f4efe1;
   --card-description: #cbb677;
   --card-hover-border: #cbb677;
@@ -80,6 +83,7 @@
   --door-text: #f4efe1;
   --seat-border: #cbb677;
   --landing-overlay: rgba(27, 20, 39, 0.5);
+  --breadcrum-item: var(--lightBlue)
 }
 
 html {
