@@ -1,6 +1,5 @@
-const API_BASE =
-  import.meta.env.VITE_OCCUPANCY_API_BASE ??
-  "http://138.197.83.151/api/occupancy";
+const DEFAULT_API_BASE = "http://138.197.83.151/api/occupancy";
+const API_BASE = import.meta.env.VITE_OCCUPANCY_API_BASE ?? DEFAULT_API_BASE;
 
 export const fetchData = async ({ sinceTs } = {}) => {
   const query = new URLSearchParams();

@@ -102,31 +102,42 @@ body {
   transition:
     background-color 0.25s ease,
     color 0.25s ease;
-  /*overflow-x: hidden;*/
-  /*overflow-y: hidden;*/
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 #root {
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .main {
-  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .top {
   display: flex;
+  flex: 0 0 auto;
 }
 
 .left {
   display: flex;
   flex: 0 0 auto;
+  min-width: 0;
 }
 
 .center {
   display: flex;
   width: 100%;
-  min-height: calc(100vh - 17vh);
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  align-items: stretch;
+  gap: 0;
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 
 .aside-center {
@@ -148,24 +159,25 @@ body {
 
 .screen {
   display: flex;
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
   overflow: auto;
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 720px) {
+  .main {
+    overflow: visible;
+  }
+
   .center {
     flex-direction: column;
   }
 
-  .left,
+  .center,
   .screen,
+  .left,
   .aside-left {
     width: 100%;
-  }
-
-  .screen {
-    min-height: 0;
   }
 }
