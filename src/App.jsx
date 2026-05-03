@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import "./App.css";
 import "/css/styles.css";
 import Aside from "./components/Aside";
 import Header from "./components/Header";

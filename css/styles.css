@@ -11,12 +11,13 @@
   --mediumBlue: #5498b6;
   --jmuRed: #a4232b;
   --lightBlue: #42d7f5;
+
   /* Status colors */
   --isFull: rgb(225, 0, 0);
   --isIdle: rgb(216, 202, 2);
   --isEmpty: rgb(0, 194, 0);
 
-  /* Light theme tokens */
+  /* Light theme */
   --page-bg: lightgray;
   --text-primary: #ffffff;
   --text-on-accent: #ffffff;
@@ -51,6 +52,7 @@
   --breadcrum-item: var(--jmuPurple);
 }
 
+/* Dark theme */
 :root[data-theme="dark"] {
   --page-bg: #1b1427;
   --text-primary: #f4efe1;
