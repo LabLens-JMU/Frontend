@@ -4,14 +4,15 @@ LabLens is a lab occupancy tracking system that shows real-time seat availabilit
 
 ## Overview
 
-This project uses a MERN stack variation (MySQL) plus Vite and JSX. This is an IoT web platform project to monitor computer lab usage. The frontend focuses on displaying live occupancy data and historical trends in a clear and user-friendly interface.
+This project uses a MERN stack variation (MySQL). This is an IoT web platform project to monitor computer lab usage. The frontend focuses on displaying live occupancy data and historical trends in a clear and user-friendly interface.
 
 ## Features
 
 - Real-time lab occupancy display
-- Historical usage trends (by day and time)
-- Interactive dashboard UI built with React
+- Historical trend graphs (line and bar)
+- Interactive dashboard UI built with React.js
 - Scalable design for multiple lab rooms
+- Light/Dark mode themes
 
 ## Tech Stack
 
@@ -21,25 +22,19 @@ This project uses a MERN stack variation (MySQL) plus Vite and JSX. This is an I
 - JSX
 - CSS
 - JS
-
-**Backend**
-
 - Node.js
-- Express
+- Express.js
+- Vite
+- Chart.js
 
 **Database**
 
 - Digital Ocean (MySQL)
 
-**Hardware**
-
-- Raspberry Pi
-- YOLOv8
-- Camera
-
 **Deployment**
 
-- Github Pages
+- Locally: Vite
+- Live: Github Pages
 
 ## Architecture
 
